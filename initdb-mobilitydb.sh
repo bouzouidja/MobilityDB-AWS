@@ -2,7 +2,7 @@
 
 #echo "shared_preload_libraries = 'postgis-2.5.so'" >> $PGDATA/postgresql.conf
 
-#set -e
+set -e
 
 # Create the 'mobilitydb' extension in the mobilitydb database
 echo "Loading MobilityDB extension into mobilitydb"
