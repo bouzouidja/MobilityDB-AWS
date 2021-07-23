@@ -26,8 +26,8 @@ Requirements
 
 *   aws account
 *   docker latest version
-*   kubectl
-*	eksctl
+*   kubectl to deploy the 
+*	eksctl to manage the aws cluster from your host machine
 
 
 For example, you can build the following command to install all MobilityDB build dependencies for Debian-based systems:
@@ -40,7 +40,7 @@ apt install build-essential cmake postgresql-server-dev-11 liblwgeom-dev libproj
 -------------
 
 ### Build Citus & MobilityDB 
-This image deploy Citus on top of MobilityDB.
+This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately.
 ```bash
 git clone https://github.com/bouzouidja/scale_mobilitydb.git
 cd scale_mobilitydb
@@ -49,3 +49,4 @@ docker build -t scalemobilitydb/scalemobilitydb .
 
 ### Deployment  on aws services
 
+In this manual we will show you two kind of scaling the MobilityDB on aws services.
