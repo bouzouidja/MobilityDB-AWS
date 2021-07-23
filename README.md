@@ -18,3 +18,34 @@ This repository contains code and the documentation for running the [BerlinMOD](
 [docker-postgres]: https://hub.docker.com/_/postgres/
 [compose-config]: docker-compose.yml
 [workerlist-gen]: https://github.com/citusdata/workerlist-gen
+
+
+
+Requirements
+------------
+
+*   aws account
+*   docker latest version
+*   kubectl
+*	eksctl
+
+
+For example, you can build the following command to install all MobilityDB build dependencies for Debian-based systems:
+```bash
+apt install build-essential cmake postgresql-server-dev-11 liblwgeom-dev libproj-dev libjson-c-dev
+```
+
+
+ User's Manual
+-------------
+
+### Build Citus & MobilityDB 
+This image deploy Citus on top of MobilityDB.
+```bash
+git clone https://github.com/bouzouidja/scale_mobilitydb.git
+cd scale_mobilitydb
+docker build -t scalemobilitydb/scalemobilitydb .
+```
+
+### Deployment  on aws services
+
