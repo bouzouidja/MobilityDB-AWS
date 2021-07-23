@@ -21,7 +21,7 @@ ENV POSTGIS_VERSION 2.5
 # Fix the Release file expired problem
 RUN echo "Acquire::Check-Valid-Until \"false\";\nAcquire::Check-Date \"false\";" | cat > /etc/apt/apt.conf.d/10no--check-valid-until
 
-# install Citus
+# Install MobilityDB Prerequisites 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        ca-certificates \
@@ -49,6 +49,8 @@ RUN apt-get update \
        postgresql-13-postgis-$POSTGIS_VERSION \
        postgresql-13-postgis-$POSTGIS_VERSION-scripts \
     && rm -rf /var/lib/apt/lists/*
+
+# Install citus
 RUN curl -s https://install.citusdata.com/community/deb.sh | bash \
     && apt-get install -y postgresql-$PG_MAJOR-citus-10.1.=$CITUS_VERSION \
                           postgresql-$PG_MAJOR-hll=2.15.citus-1 \

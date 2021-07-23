@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+
+<!ENTITY last_release_version "1.0">
+
+<!ENTITY introduction SYSTEM "introduction.xml">
+<!--<!ENTITY time_types_range_types SYSTEM "time_types_range_types.xml">
+<!ENTITY temporal_types SYSTEM "temporal_types.xml">
+<!ENTITY manipulating_box_types SYSTEM "manipulating_box_types.xml">
+<!ENTITY manipulating_temporal_types SYSTEM "manipulating_temporal_types.xml">
+<!ENTITY reference SYSTEM "reference.xml">-->
+
+<!ENTITY geography_support
+"<inlinemediaobject>
+	<imageobject><imagedata fileref='images/world.pdf' width='16pt' /></imageobject>
+	<imageobject><imagedata fileref='images/world.svg' width='16pt' /></imageobject>
+	<imageobject><imagedata fileref='images/world.png' width='16pt' /></imageobject>
+ </inlinemediaobject>
+">
+
+<!ENTITY Z_support
+"<inlinemediaobject>
+	<imageobject><imagedata fileref='images/cube.pdf' width='16pt' /></imageobject>
+	<imageobject><imagedata fileref='images/cube.svg' width='16pt' /></imageobject>
+	<imageobject><imagedata fileref='images/cube.png' width='16pt' /></imageobject>
+ </inlinemediaobject>
+">
+
+<!ENTITY python_support
+"<inlinemediaobject>
+	<imageobject><imagedata fileref='images/python.pdf' width='16pt' /></imageobject>
+	<imageobject><imagedata fileref='images/python.svg' width='16pt' /></imageobject>
+	<imageobject><imagedata fileref='images/python.png' width='16pt' /></imageobject>
+ </inlinemediaobject>
+">
+
+]>
+<book lang="en">
+	<bookinfo>
+		<title>MobilityDB distributed on AWS cloud &last_release_version; User's Manual</title>
+		<author>
+			<firstname>Sid Ahmed</firstname>
+			<surname>BOUZOUIDJA</surname>
+			<affiliation>
+				<orgname>Université libre de Bruxelles, Belgium</orgname>
+			</affiliation>
+		</author>
+
+		<pubdate>06.25.2021</pubdate>
+		<abstract>
+			<para>
+
+
+
+				
+MobilityDB is an open source moving object database system. It is based on PostgreSQL and PostGIS. It provides an effective functionality in order to analyze data trajectory. 
+
+Since MobilityDB store a large datasets and treat a complex queries, the scalability is highly required.
+In this manual we will see how to make MobilityDB scalable on Kubernetes cluster in order to deploy a portable version of it on AWS cloud plateform.
+
+</ulink>.
+			</para>
+
+			<para>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref='images/mobilitydb-logo.png' width='200pt' />
+					</imageobject>
+				</inlinemediaobject>
+			</para>
+
+			<para>
+				MobilityDB is developed by the Computer &amp; Decision Engineering Department of the Université Libre de Bruxelles (ULB) under the direction of Prof. Esteban Zimányi. ULB is an OGC Associate Member and member of the OGC Moving Feature Standard Working Group (<ulink url="https://www.ogc.org/projects/groups/movfeatswg">MF-SWG</ulink>).
+			</para>
+
+			<para>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref='images/OGC_Associate_Member_3DR.png' width='100pt' />
+					</imageobject>
+				</inlinemediaobject>
+			</para>
+
+			<para>
+				This is the manual for MobilityDB v1.0. The MobilityDB Manual is licensed under a <ulink url="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License 3</ulink>. Feel free to use this material any way you like, but we ask that you attribute credit to the MobilityDB Project and wherever possible, a link back to <ulink url="https://github.com/MobilityDB/MobilityDB">MobilityDB</ulink>.
+			</para>
+
+			<para>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref='images/cc-by-sa.png' width='100pt' />
+					</imageobject>
+				</inlinemediaobject>
+			</para>
+		</abstract>
+	</bookinfo>
+
+	&introduction;
+	<!--&time_types_range_types;
+	&temporal_types;
+	&manipulating_box_types;
+	&manipulating_temporal_types;
+	<index />
+	&reference;-->
+
+</book>
