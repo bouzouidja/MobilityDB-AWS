@@ -2,12 +2,11 @@
 # see citusdata/tools/packaging_automation/templates/docker/latest/latest.tmpl.dockerfile.
 FROM postgres:13.3
 ARG VERSION=10.1.0
-LABEL maintainer="Citus Data https://citusdata.com" \
-      org.label-schema.name="Citus" \
-      org.label-schema.description="Scalable MobilityDB" \
+LABEL maintainer="Scale MobilityDB project https://" \
+      org.label-schema.name="MobilityDB on AWS" \
+      org.label-schema.description="Deploying MobilityDB on AWS services" \
       org.label-schema.url="https://www.citusdata.com" \
       org.label-schema.vcs-url="https://github.com/bouzouidja/scalable_mobilitydb" \
-      org.label-schema.vendor="Citus Data, Inc." \
       org.label-schema.version=${VERSION} \
       org.label-schema.schema-version="1.0"
 
