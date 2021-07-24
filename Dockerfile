@@ -72,9 +72,9 @@ RUN cd /usr/local/src/ \
 	make install
 
 
-RUN mkdir -p /docker-entrypoint-initdb.d
-COPY ./initdb-mobilitydb.sh /docker-entrypoint-initdb.d/mobilitydb.sh
-RUN chmod +x /docker-entrypoint-initdb.d/mobilitydb.sh
+# RUN mkdir -p /docker-entrypoint-initdb.d
+# COPY ./initdb-mobilitydb.sh /docker-entrypoint-initdb.d/mobilitydb.sh
+# RUN chmod +x /docker-entrypoint-initdb.d/mobilitydb.sh
 
 
 # add citus to default PostgreSQL config
