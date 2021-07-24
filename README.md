@@ -50,3 +50,21 @@ docker build -t scalemobilitydb/scalemobilitydb .
 ### Deployment  on aws services
 
 In this manual we will show you two kind of scaling the MobilityDB on aws services.
+
+### Using Citus cluster
+Before doing this step you need to connect within your aws EC2 machine considred as master node. We assume that we have already create and configure one aws EC2 host master node and some aws EC2 host worker node.
+- You can run the image as standalone using docker run command
+```bash
+sudo ssh -i YourKeyPairGenerated.pem ubuntu@EC2_Public_IP_Address
+
+docker run --name scaledb_standalone -p 5432:5432 scalemobilitydb/scalemobilitydb \
+            -v /path/on/host_mobilitydb_data/:/path/inside/container_mobilitydb_data\ 
+
+``` 
+After running the scaledb instance you can add and scale manually your database using the citus query  select * from citus_add_node('new-node', port);
+- Running the image as Citus cluster using docker-compose command
+
+
+
+### Using AWS EKS's Kubernetes service
+Before running this step 
