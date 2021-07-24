@@ -67,4 +67,4 @@ After running the scaledb instance you can add and scale manually your database 
 
 
 ### Using AWS EKS's Kubernetes service
-Before running this step 
+Before running this step, we assume that you have created an aws kubernetes cluster using the eks command-line.
