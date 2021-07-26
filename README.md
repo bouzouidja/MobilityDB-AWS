@@ -71,7 +71,7 @@ select master_get_active_worker_nodes();
 Let create MobilityDB table and distribute it on column_dist in order to create shards by hashing the column_dist values. If no nodes added on the cluster than the distribution is seen as single node citus otherwise is multi nodes citus.
 
 ```sql
-CREATE TABLE MobilityDB_table(
+CREATE TABLE mobilitydb_table(
 column_dist integer,
 T timestamp,
 Latitude float,
@@ -79,9 +79,9 @@ Longitude float,
 Geom geometry(Point, 4326)
 );
 
-SELECT create_distributed_table('MobilityDB_table', 'column_dist');
+SELECT create_distributed_table('mobilitydb_table', 'column_dist');
 ```
-fill free to fill the table MobilityDB_table before or after the distribution. At this stage you can run MobilityDB queries on the citus cluster.
+fill free to fill the table mobilitydb_table before or after the distribution. At this stage you can run MobilityDB queries on the citus cluster.
 
 
 
@@ -143,16 +143,16 @@ aws --version
 ```
 AWS requires that all incoming requests are cryptographically signed. Let configure some mandatory information in order to use the aws services.
 
-[Access Key ID]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds
+[Access Key ID](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds)
 
 
-[Secret access Key]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds
+[Secret access Key](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds)
 
 
-[AWS Region]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-region
+[AWS Region](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-region)
 
 
-[Output Format]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-format
+[Output Format](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-format)
 
 Navigate to https://console.aws.amazon.com/iam/home#/home
 - In the navigation pane, choose Users.
