@@ -174,14 +174,22 @@ aws configure
 In my case i used the eu-west-3 region (Paris)
 
 
-4. Required IAM permissions
+4. Creating an Amazon EKS cluster (control plane)
 
 
-create first a aws account and create a user 
+```bash
+eksctl create cluster \
+ --name mobilitydb-cluster \
+ --version 1.20 \
+ --region eu-west-3\
+ --nodegroup-name linux-nodes\
+ --node-type m5.large\
+ --nodes 3
+```
 
-assign a list of permission for this user in order to allow it to use the aws elastics kubernetes services
+In the region option you can use the nearest region from your location.
+In the node-type option we define the type of the ressource for the created node. AWS provide a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:) 
 
-4. Create a cluster control plane (master node)
 
 5. create worker node and connect them to cluster. The worker node will be the EC2 instances with certain ressources (CPUs, RAM, storages)
 We will create the worker nodes as Node Group (group of nodes), We can scale our node group according to the needs. The auto scaling can be configuring (define maximum and minimun of worker nodes)
