@@ -65,8 +65,7 @@ spec:
       labels:
         app: scale-mobilitydb
     data:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: docker
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
 ---
     apiVersion: v1

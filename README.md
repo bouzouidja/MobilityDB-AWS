@@ -11,14 +11,6 @@ This repository contains code and the documentation for running the [BerlinMOD](
 
 
 
-[image size]: https://microbadger.com/images/citusdata/citus
-[release]: https://github.com/citusdata/docker/releases/latest
-[license]: LICENSE
-[citus data]: https://www.citusdata.com
-[docker-postgres]: https://hub.docker.com/_/postgres/
-[compose-config]: docker-compose.yml
-[workerlist-gen]: https://github.com/citusdata/workerlist-gen
-
 
 
 Requirements
@@ -219,8 +211,24 @@ kubectl get nodes
 
 6. Deploy our scaleMobilityDB image using the kubectl
 
-We have prepared a manifest yaml file that define the mobilityDB deployment, configMap, PersistentVolume and service that expose the mobilityDB to clients.
-In the same repository (scalemobilitydb) run this command
+We have prepared a manifest yaml file that define the environment of our workload mobilityDB. It contain the basics information and configuration in order to configure our Kubernetes cluster.
+The deployment instance used to specify the scalemobilitydb docker image and the and to mount volume path. Finnaly the number  of replications to our deployment in order to increase the availability.
+
+configMap instance defined the environement information (postgres user, password, database name).
+
+The most important instances is the PersistentVolume and PersistentVolumeClaim. The PersistentVolume parameter allows to define the class of storage, device and file system allow that store our mobilitydb data, it simply a workers nodes that store data. AWS provides different classes of storages, for more information see [this](https://docs.aws.amazon.com/eks/latest/userguide/storage.html). The PersistentVolumeClaim parameter defines the type of request, access to use in order to interogate our PersistentVolume. A PersistentVolumeClaim has a access type policy – ReadWriteOnce, ReadOnlyMany, or ReadWriteMany. It simply a pod that manage the accesses to storage.
+When you create a EKS cluster, by default the PersistentVolume is set to gp2 (General Purpose SSD driver). It's an Amazon EBS (Elastic Block Store) class.
+Use this command to see the default storage class.
+```bash
+kubectl get storageclass
+# NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+# gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  15d
+```
+If you want to create your own storage class and set it as default, follow [this guides](https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html)
+
+Finnaly the service instance used to expose our mobilitydb workload. All thoses configuration can be updated according to your workload needs.
+
+Putting it all together in mobilitydb-workload.yaml file. Run this command to initialize all the instances. 
 ```bash
 kubectl apply -f mobilitydb-workload.yaml
 
@@ -231,9 +239,28 @@ kubectl apply -f mobilitydb-workload.yaml
 # service/scale-mobilitydb created
 
 ```
-To see the pods, services created run this command
+Now you should see all instances running.
 ```bash
 kubectl get all
+
+# NAME                                    READY   STATUS    RESTARTS   AGE
+# pod/scale-mobilitydb-7d745544dd-pm2hm   1/1     Running   0          69m
+
+# NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+# service/kubernetes         ClusterIP   10.100.0.1      <none>        443/TCP          15d
+# service/scale-mobilitydb   NodePort    10.100.38.140   <none>        5432:30200/TCP   69m
+
+# NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+# deployment.apps/scale-mobilitydb   1/1     1            1           69m
+
+# NAME                                          DESIRED   CURRENT   READY   AGE
+# replicaset.apps/scale-mobilitydb-7d745544dd   1         1         1       69m
+
+
+
+
+
+
 ````
 
 At this stage you can run you psql client to confirm that the scalemobilitydb is deployed.
@@ -249,13 +276,35 @@ kubectl get pod -owide
 ```
 In my case the postgres have pod name as postgres-98c7c5945-rrfwc and is running in the node 192.168.56.190.
 
-As we have the host ip and the name of pod that run our mobilitydb instance we can use this command to connect 
-
+As we have the host ip and the name of pod that run our mobilitydb instance we can use this command to connect, the password for postgres user is root. We can run our psql client within the pod scale-mobilitydb to confirm that citus and mobilitydb extension it's well created.
 
 ```bash
 
 kubectl exec -it  postgres-98c7c5945-rrfwc -- psql -h 192.168.56.190 -U postgres -p 5432 postgres
+
+# Password for user postgres: 
+# psql (13.3 (Debian 13.3-1.pgdg100+1))
+# SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, bits: 256, compression: off)
+# Type "help" for help.
+
+# postgres=# \dx
+#                                       List of installed extensions
+#     Name    | Version |   Schema   |                             Description                             
+# ------------+---------+------------+-------------------------------------------------#--------------------
+# citus      | 10.1-1  | pg_catalog | Citus distributed database
+#  mobilitydb | 1.0     | public     | Temporal datatypes and functions
+# plpgsql    | 1.0     | pg_catalog | PL/pgSQL procedural language
+# postgis    | 2.5.5   | public     | PostGIS geometry, geography, and raster spatial types and functions
+#(4 rows)
+
+#postgres=# 
+
+
 ```
+
+
+
+
 
 
 
