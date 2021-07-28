@@ -1,12 +1,13 @@
 #!/bin/bash
 
-#echo "shared_preload_libraries = 'postgis-2.5.so'" >> $PGDATA/postgresql.conf
+echo "shared_preload_libraries = 'citus, postgis-2.5.so'" >> $PGDATA/postgresql.conf
 
 set -e
 
 # Create the 'mobilitydb' extension in the mobilitydb database
 echo "Loading MobilityDB extension into mobilitydb"
-psql --user="$POSTGRES_USER" --dbname="mobilitydb" <<- 'EOSQL'
+psql --user="$POSTGRES_USER" --dbname="postgres" <<- 'EOSQL'
+	CREATE EXTENSION citus;
 	CREATE EXTENSION IF NOT EXISTS mobilitydb CASCADE;
-	CREATE EXTENSION IF NOT EXISTS citus;
+	
 EOSQL

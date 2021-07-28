@@ -171,8 +171,11 @@ aws configure
 # Default region name [eu-west-3]: 
 # Default output format [None]: 
 ```
-In my case i used the eu-west-3 region (Paris)
-
+You can use the default region as the nearest one from you. In my case i used the eu-west-3 region (Paris).
+At this stage we can manage our AWS services remotely from our machine through the credentials stored on the file located in: 
+```bash
+~/.aws/credentials
+```
 
 4. Creating an Amazon EKS cluster (control plane)
 
@@ -190,9 +193,74 @@ eksctl create cluster \
 In the region option you can use the nearest region from your location.
 In the node-type option we define the type of the ressource for the created node. AWS provide a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:) 
 
+The creation process take about a 20 minutes of time.
 
-5. create worker node and connect them to cluster. The worker node will be the EC2 instances with certain ressources (CPUs, RAM, storages)
-We will create the worker nodes as Node Group (group of nodes), We can scale our node group according to the needs. The auto scaling can be configuring (define maximum and minimun of worker nodes)
+If you want to delete the cluster with all the ressources created just use:
+```bash
+eksctl delete cluster --name mobilitydb-cluster
+```` 
 
-6. Deploy the MobilityDB image using the kubectl
 
+Autoscaler add EC2 node to make the cluster growing according to the metrics
+
+5. View the cluster's ressources
+
+```bash
+kubectl get nodes
+# You should see your EC2 node as this:
+# NAME                                           STATUS   ROLES    AGE     VERSION
+# ip-192-168-47-163.eu-west-3.compute.internal   Ready    <none>   8m56s   v1.20.4-eks-6b7464
+# ip-192-168-9-100.eu-west-3.compute.internal    Ready    <none>   8m48s   v1.20.4-eks-6b7464
+# ip-192-168-95-188.eu-west-3.compute.internal   Ready    <none>   8m52s   v1.20.4-eks-6b7464
+
+```
+
+
+
+6. Deploy our scaleMobilityDB image using the kubectl
+
+We have prepared a manifest yaml file that define the mobilityDB deployment, configMap, PersistentVolume and service that expose the mobilityDB to clients.
+In the same repository (scalemobilitydb) run this command
+```bash
+kubectl apply -f mobilitydb-workload.yaml
+
+# deployment.apps/scale-mobilitydb created
+# persistentvolume/postgres-pv-volume unchanged
+# persistentvolumeclaim/postgres-pv-claim unchanged
+# configmap/postgres-config unchanged
+# service/scale-mobilitydb created
+
+```
+To see the pods, services created run this command
+```bash
+kubectl get all
+````
+
+At this stage you can run you psql client to confirm that the scalemobilitydb is deployed.
+To run the psql, we need to know on which node the mobilitydb pod is running. the following command show details informations including the ip address that host the scalemobilitydb.  
+```bash
+kubectl get pod -owide
+
+# NAME                                READY   STATUS    RESTARTS   AGE     IP               NODE                                          NOMINATED NODE   READINESS GATES
+# postgres-98c7c5945-rrfwc            1/1     Running   1          4d23h   192.168.56.190   ip-192-168-46-36.eu-west-3.compute.internal   <none>           <none>
+# scale-mobilitydb-7d745544dd-gqrf5   1/1     Running   0          19h     192.168.60.214   ip-192-168-46-36.eu-west-3.compute.internal   <none>           <none>
+
+
+```
+In my case the postgres have pod name as postgres-98c7c5945-rrfwc and is running in the node 192.168.56.190.
+
+As we have the host ip and the name of pod that run our mobilitydb instance we can use this command to connect 
+
+
+```bash
+
+kubectl exec -it  postgres-98c7c5945-rrfwc -- psql -h 192.168.56.190 -U postgres -p 5432 postgres
+```
+
+
+
+
+7. Vertical Pod Autoscaler  
+In order to make the MobilityDb queries more powerfull, we have used the single node citus that create shards for distributed table, and then we have used the a vertical autoscaler provided by EKS in wich the ressources (cpu, RAM) is reserved or free up to or from the cluster.   
+
+8. Horizontal Pod Autoscaler

@@ -12,9 +12,9 @@ LABEL maintainer="Scale MobilityDB project https://" \
 
 ENV CITUS_VERSION ${VERSION}.citus-1
 ENV MOBILITYDB_GIT_HASH bce48f2ec6dffda1d19dd7fd8de191b2a4866d8b
-ENV POSTGRES_DBNAME=mobilitydb
-ENV POSTGRES_USER=docker 
-ENV POSTGRES_PASSWORD=docker
+ENV POSTGRES_DBNAME=postgres
+ENV POSTGRES_USER=postgres 
+ENV POSTGRES_PASSWORD=postgres
 ENV POSTGIS_VERSION 2.5
 
 # Fix the Release file expired problem
@@ -72,16 +72,15 @@ RUN cd /usr/local/src/ \
 	make install
 
 
-# RUN mkdir -p /docker-entrypoint-initdb.d
-# COPY ./initdb-mobilitydb.sh /docker-entrypoint-initdb.d/mobilitydb.sh
-# RUN chmod +x /docker-entrypoint-initdb.d/mobilitydb.sh
-
-
 # add citus to default PostgreSQL config
-RUN echo "shared_preload_libraries='citus, postgis-2.5.so'" >> /usr/share/postgresql/postgresql.conf.sample
+RUN echo "shared_preload_libraries='citus'" >> /usr/share/postgresql/postgresql.conf.sample
+
 
 # add scripts to run after initdb
-COPY 001-create-citus-extension.sql /docker-entrypoint-initdb.d/
+COPY ./initdb-mobilitydb.sh /docker-entrypoint-initdb.d/mobilitydb.sh
+RUN chmod +x /docker-entrypoint-initdb.d/mobilitydb.sh
+
+
 
 # add health check script
 COPY pg_healthcheck wait-for-manager.sh /

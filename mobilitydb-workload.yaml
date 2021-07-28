@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scale-mobilitydb
+spec:
+  selector:
+   matchLabels:
+    app: scale-mobilitydb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: scale-mobilitydb
+    spec:
+      containers:
+        - name: scale-mobilitydb
+          image: bouzouidja/scalemobilitydb:latest
+          imagePullPolicy: "IfNotPresent"
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+---
+    kind: PersistentVolume
+    apiVersion: v1
+    metadata:
+      name: postgres-pv-volume
+      labels:
+        type: local
+        app: scale-mobilitydb
+    spec:
+      storageClassName: manual
+      capacity:
+        storage: 5Gi
+      accessModes:
+        - ReadWriteMany
+      hostPath:
+        path: "/mnt/data"
+---
+    kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: postgres-pv-claim
+      labels:
+        app: scale-mobilitydb
+    spec:
+      storageClassName: manual
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 5Gi
+    
+---
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: postgres-config
+      labels:
+        app: scale-mobilitydb
+    data:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: postgres
+---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: scale-mobilitydb
+      labels:
+        app: scale-mobilitydb
+    spec:
+       ports:
+        - name: scale-mobilitydb
+          port: 5432
+          nodePort: 30200
+       type: NodePort
+       selector:
+        app: scale-mobilitydb
