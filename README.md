@@ -1,14 +1,15 @@
 # scalable MobilityDB on AWS could services
 
-This repository provides a configuration in order to deploy the MobilityDB on AWS cloud using EKS service and Citus cluster.
-We prepared an image that combine the mobilityDB environement and citus environement built on top of it.
+This repository provides a configuration files in order to deploy the MobilityDB on AWS cloud using EKS service and Citus cluster.
+
+We prepared an image that combine the MobilityDB environement and citus environement built on top of it.
 In addition you can find in the doc folder a different way to scale the MobilityDB on AWS cloud and we described the architecture of Elastic Kubernetes Service. 
 
 
 [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB) is an open source software program that adds support for temporal and spatio-temporal objects to the [PostgreSQL](https://www.postgresql.org/) database and its spatial extension [PostGIS](http://postgis.net/).
 
 
-Citus is a PostgreSQL-based distributed RDBMS. For more information, see the [Citus Data website][citus data].
+Citus is a PostgreSQL-based distributed RDBMS.Is an open source extension to PostgreSQL that transforms Postgres into a distributed database. To scale out Postgres horizontally, Citus employs distributed tables, reference tables, and a distributed SQL query engine. The query engine parallelizes SQL queries across multiple servers in a database cluster to deliver dramatically improved query response times, even for data-intensive applications. For more information, see the [Citus Data website](http://docs.citusdata.com/en/v10.1/).
 
 
 
@@ -22,6 +23,15 @@ Requirements
 *	eksctl to manage the aws cluster from your host machine
 
 
+Both approachs need to build the scale-mobilitydb image.
+
+### Build Citus on top of MobilityDB 
+This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in your host machine if you foollow the deployment on AWS EKS cluster.  
+```bash
+git clone https://github.com/bouzouidja/scale_mobilitydb.git
+cd scale_mobilitydb
+docker build -t scalemobilitydb/scalemobilitydb .
+```
 
 
 
@@ -107,9 +117,9 @@ At this stage we can manage our AWS services remotely from our machine through t
 ~/.aws/credentials
 ```
 
-4. Creating an Amazon EKS cluster (control plane)
+### Create an Amazon EKS cluster (control plane)
 
-
+1. Run the following eksctl in order to create a cluster using Elastic Kubernetes Service
 ```bash
 eksctl create cluster \
  --name mobilitydb-cluster \
@@ -119,11 +129,11 @@ eksctl create cluster \
  --node-type m5.large \
  --ssh-access \
  --nodes 3 
- --nodes-min=2 --nodes-max=5 
 ```
 
 In the region option you can use the nearest region from your location.
-In the node-type option we define the type of the ressource for the created node. AWS provide a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:). The nodes-min and node-max options used for the auto scaling node group. 
+In the node-type option you can define the type of the ressource for the created node. AWS provide a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:).
+You can customize your cluster creation using according to you needs, Run eksctl create cluster --help to see all the options.
 
 The creation process take about a 20 minutes of time.
 
@@ -135,7 +145,7 @@ eksctl delete cluster --name mobilitydb-cluster
 
 Autoscaler add EC2 node to make the cluster growing according to the metrics
 
-5. View the cluster's ressources
+2. View the cluster's ressources
 
 ```bash
 kubectl get nodes
@@ -146,17 +156,22 @@ kubectl get nodes
 # ip-192-168-95-188.eu-west-3.compute.internal   Ready    <none>   8m52s   v1.20.4-eks-6b7464
 
 ```
+You should see three nodes created in the terminal and the AWS interface for EC2 instances [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#Instances:instanceState=running)
 
 
 
-6. Deploy our scaleMobilityDB image using the kubectl
+### Deploy our scaleMobilityDB image using the kubectl
 
 We have prepared a manifest yaml file that define the environment of our workload mobilityDB. It contain the basics information and configuration in order to configure our Kubernetes cluster.
-The deployment instance used to specify the scalemobilitydb docker image and the and to mount volume path. Finnaly the number  of replications to our deployment in order to increase the availability.
+The deployment instance used to specify the scale-mobilitydb docker image and mount volume path. Finnaly the number of replications to our deployment in order to increase the availability.
 
 configMap instance defined the environement information (postgres user, password, database name).
 
-The most important instances is the PersistentVolume and PersistentVolumeClaim. The PersistentVolume parameter allows to define the class of storage, device and file system allow that store our mobilitydb data, it simply a workers nodes that store data. AWS provides different classes of storages, for more information see [this](https://docs.aws.amazon.com/eks/latest/userguide/storage.html). The PersistentVolumeClaim parameter defines the type of request, access to use in order to interogate our PersistentVolume. A PersistentVolumeClaim has a access type policy – ReadWriteOnce, ReadOnlyMany, or ReadWriteMany. It simply a pod that manage the accesses to storage.
+The most important instances is the PersistentVolume and PersistentVolumeClaim. 
+
+The PersistentVolume parameter allows to define the class of storage, device and file system allow that store our mobilitydb data, it simply a workers nodes that store data. AWS provides different classes of storages, for more information see [this](https://docs.aws.amazon.com/eks/latest/userguide/storage.html). 
+
+The PersistentVolumeClaim parameter defines the type of request, access to use in order to interogate our PersistentVolume. A PersistentVolumeClaim has an access type policy – ReadWriteOnce, ReadOnlyMany, or ReadWriteMany. It simply a pod that manage the accesses to storage.
 When you create a EKS cluster, by default the PersistentVolume is set to gp2 (General Purpose SSD driver). It's an Amazon EBS (Elastic Block Store) class.
 Use this command to see the default storage class.
 ```bash
@@ -166,7 +181,7 @@ kubectl get storageclass
 ```
 If you want to create your own storage class and set it as default, follow [this guides](https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html)
 
-Finnaly the service instance used to expose our mobilitydb workload. All thoses configuration can be updated according to your workload needs.
+Finnaly the service instance used to expose our MobilityDB workload. All thoses configuration can be updated according to your workload needs.
 
 Putting it all together in mobilitydb-workload.yaml file. Run this command to initialize all the instances. 
 ```bash
@@ -184,7 +199,7 @@ Now you should see all instances running.
 kubectl get all
 
 # NAME                                    READY   STATUS    RESTARTS   AGE
-# pod/scale-mobilitydb-7d745544dd-pm2hm   1/1     Running   0          69m
+# pod/scale-mobilitydb-7d745544dd-dkm7k   1/1     Running   0          43s
 
 # NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
 # service/kubernetes         ClusterIP   10.100.0.1      <none>        443/TCP          15d
@@ -196,31 +211,25 @@ kubectl get all
 # NAME                                          DESIRED   CURRENT   READY   AGE
 # replicaset.apps/scale-mobilitydb-7d745544dd   1         1         1       69m
 
-
-
-
-
-
 ````
 
-At this stage you can run you psql client to confirm that the scalemobilitydb is deployed.
-To run the psql, we need to know on which node the mobilitydb pod is running. the following command show details informations including the ip address that host the scalemobilitydb.  
+At this stage you can run your psql client to confirm that the scale-mobilitydb is deployed successfully.
+To run the psql, we need to know on which node the MobilityDB pod is running. the following command show details informations including the ip address that host the scale-mobilitydb.  
 ```bash
 kubectl get pod -owide
 
 # NAME                                READY   STATUS    RESTARTS   AGE     IP               NODE                                          NOMINATED NODE   READINESS GATES
-# postgres-98c7c5945-rrfwc            1/1     Running   1          4d23h   192.168.56.190   ip-192-168-46-36.eu-west-3.compute.internal   <none>           <none>
-# scale-mobilitydb-7d745544dd-gqrf5   1/1     Running   0          19h     192.168.60.214   ip-192-168-46-36.eu-west-3.compute.internal   <none>           <none>
+# scale-mobilitydb-7d745544dd-dkm7k   1/1     Running   0          100s   192.168.45.32   ip-192-168-60-10.eu-west-3.compute.internal   <none>           <none>
 
 
 ```
-In my case the postgres have pod name as postgres-98c7c5945-rrfwc and is running in the node 192.168.56.190.
+In my case, scale-mobilitydb have pod name as scale-mobilitydb-7d745544dd-dkm7k and is running in the node 192.168.45.32.
 
-As we have the host ip and the name of pod that run our mobilitydb instance we can use this command to connect, the password for postgres user is root. We can run our psql client within the pod scale-mobilitydb to confirm that citus and mobilitydb extension it's well created.
+As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use this command to connect to postgres database, the password for postgres user is postgres. We can run our psql client within the pod scale-mobilitydb to confirm that citus and mobilitydb extension it's well created.
 
 ```bash
 
-kubectl exec -it  postgres-98c7c5945-rrfwc -- psql -h 192.168.56.190 -U postgres -p 5432 postgres
+kubectl exec -it  scale-mobilitydb-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U postgres -p 5432 postgres
 
 # Password for user postgres: 
 # psql (13.3 (Debian 13.3-1.pgdg100+1))
@@ -241,15 +250,18 @@ kubectl exec -it  postgres-98c7c5945-rrfwc -- psql -h 192.168.56.190 -U postgres
 
 
 ```
-7. Run mobilitydb queries
+### Run MobilityDB queries
 .....
 In order to make the MobilityDb queries more powerfull, we have used the single node citus that create shards for distributed table,
 
 
 
-As we have a complex MobilityDB queries, we may use the Vertical Autoscaler and the Horizontal Autoscaler to optimize the cost according to the query needs.
+Auto scaling AWS service 
+------------
+As we have a complex MobilityDB queries, we may use the Vertical Autoscaler and the Horizontal Autoscaler that AWS provides to optimize the cost according to the query needs.
 
-8. Vertical Pod scaling using the Autoscaler 
+### Vertical Pod scaling using the Autoscaler
+
 The vertical scaling that provide aws it's a mechanism allows us to adjust automatically the pods ressources. This adjustment decrease the cluster cost and can free up cpu and memory to other pods that may need it. The vertical autoscaler analyze the pods demand in order to see if the CPU and memory requirements are appropriate. If adjustments are needed, the vpa-updater relaunches the pods with updated values. 
 
 To deploy the vertical autoscaler, as following is the steps:
@@ -282,10 +294,10 @@ kubectl get pods -n kube-system
 
 ``` 
 
-9. Horizontal Pod scaling using the Autoscaler
+### Horizontal Pod scaling using the Autoscaler
 
 
-The horizontal Autoscaler that provides AWS allows to increase the number of pods within the cluster, it's a replication controller. This can help your applications scale out to meet increased demand or scale in when resources are not needed, the Horizontal Pod Autoscaler scales your application in or out to try to meet that target.
+The horizontal Autoscaler that provides AWS allows to increase the number of pods within the cluster, it's a replication controller. This can help the application scale out to meet increased demand or scale in when resources are not needed, the Horizontal Pod Autoscaler makes application to meet the resources target.
 
 Before deploying the Horizontal autoscaler, we need the Kubernetes Metric server.
 The metric server is an API that collect the ressources statistics from the cluster and expose them for the use of the autoscaler. For more information about the metric server see [here](https://github.com/kubernetes-sigs/metrics-server).
@@ -298,30 +310,9 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 ``` 
   
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Deployment using Citus cluster using AWS EC2 instances
 ------------
 
-### Build Citus on top of MobilityDB 
-This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This step need to be executed in all your cluster nodes.
-```bash
-git clone https://github.com/bouzouidja/scale_mobilitydb.git
-cd scale_mobilitydb
-docker build -t scalemobilitydb/scalemobilitydb .
-```
 
 
 ### Deploy scale-mobilitydb as standalone
