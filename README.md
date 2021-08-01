@@ -1,14 +1,14 @@
-# scalable MobilityDB
+# scalable MobilityDB on AWS could services
 
-This image provides the combination of the mobilityDB extension and citus extension on top of it.
-
-Citus is a PostgreSQL-based distributed RDBMS. For more information, see the [Citus Data website][citus data].
+This repository provides a configuration in order to deploy the MobilityDB on AWS cloud using EKS service and Citus cluster.
+We prepared an image that combine the mobilityDB environement and citus environement built on top of it.
+In addition you can find in the doc folder a different way to scale the MobilityDB on AWS cloud and we described the architecture of Elastic Kubernetes Service. 
 
 
 [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB) is an open source software program that adds support for temporal and spatio-temporal objects to the [PostgreSQL](https://www.postgresql.org/) database and its spatial extension [PostGIS](http://postgis.net/).
 
-This repository contains code and the documentation for running the [BerlinMOD](http://dna.fernuni-hagen.de/secondo/BerlinMOD/BerlinMOD.html) benchmark on MobilityDB.
 
+Citus is a PostgreSQL-based distributed RDBMS. For more information, see the [Citus Data website][citus data].
 
 
 
@@ -18,71 +18,9 @@ Requirements
 
 *   aws account
 *   docker latest version
-*   kubectl to deploy the 
+*   kubectl to deploy application/images from your host machine 
 *	eksctl to manage the aws cluster from your host machine
 
-
-
-
-Deployment using Citus cluster using AWS EC2 instances
-------------
-
-### Build Citus on top of MobilityDB 
-This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This step need to be executed in all your cluster nodes.
-```bash
-git clone https://github.com/bouzouidja/scale_mobilitydb.git
-cd scale_mobilitydb
-docker build -t scalemobilitydb/scalemobilitydb .
-```
-
-
-### Deploy scalemobilitydb as standalone
-Before doing this step you need to connect within your aws EC2 machine known as master node. We assume that we have already create and configure one aws EC2 host master node and some aws EC2 host worker node.
-- You can run the image as standalone using docker run command, Execute this on all cluster's nodes.
-```bash
-sudo ssh -i YourKeyPairGenerated.pem ubuntu@EC2_Public_IP_Address
-
-docker run --name scaledb_standalone -p 5432:5432 -e POSTGRES_PASSWORD=postgres scalemobilitydb/scalemobilitydb 
-
-``` 
-You can specify the mount volume option in order to fill the mobilityDB dataset from your host machine by adding -v /path/on/host_mobilitydb_data/:/path/inside/container_mobilitydb_data
-
-After running the scalemobilitydb instance, you can add and scale manually your database using the citus query.
-
-```sql
-select * from citus_add_node('new-node', port);
-```
-Check wether if the new-node is added correctely in the cluster.
-```sql
-select master_get_active_worker_nodes();
--  master_get_active_worker_nodes
--- --------------------------------
---  (new-node,5432)
--- (1 row)
-```
-Let create MobilityDB table and distribute it on column_dist in order to create shards by hashing the column_dist values. If no nodes added on the cluster than the distribution is seen as single node citus otherwise is multi nodes citus.
-
-```sql
-CREATE TABLE mobilitydb_table(
-column_dist integer,
-T timestamp,
-Latitude float,
-Longitude float,
-Geom geometry(Point, 4326)
-);
-
-SELECT create_distributed_table('mobilitydb_table', 'column_dist');
-```
-fill free to fill the table mobilitydb_table before or after the distribution. At this stage you can run MobilityDB queries on the citus cluster.
-
-
-
-### Deploy scalemobilitydb using citus manager
-This deployment is similar to the last one except that there is a manager node. It simply listens for new containers tagged with the worker role, then adds them to the config file in a volume shared with the master node.
-In the same repository scale_mobilitydb run the command 
-
-
-- Running the image as Citus cluster using docker-compose command
 
 
 
@@ -359,3 +297,80 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 
 ``` 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Deployment using Citus cluster using AWS EC2 instances
+------------
+
+### Build Citus on top of MobilityDB 
+This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This step need to be executed in all your cluster nodes.
+```bash
+git clone https://github.com/bouzouidja/scale_mobilitydb.git
+cd scale_mobilitydb
+docker build -t scalemobilitydb/scalemobilitydb .
+```
+
+
+### Deploy scale-mobilitydb as standalone
+Before doing this step you need to connect within your aws EC2 machine known as master node. We assume that we have already create and configure one aws EC2 host master node and some aws EC2 host worker node.
+- You can run the image as standalone using docker run command, Execute this on all cluster's nodes.
+```bash
+sudo ssh -i YourKeyPairGenerated.pem ubuntu@EC2_Public_IP_Address
+
+docker run --name scaledb_standalone -p 5432:5432 -e POSTGRES_PASSWORD=postgres scalemobilitydb/scalemobilitydb 
+
+``` 
+You can specify the mount volume option in order to fill the mobilityDB dataset from your host machine by adding -v /path/on/host_mobilitydb_data/:/path/inside/container_mobilitydb_data
+
+After running the scalemobilitydb instance, you can add and scale manually your database using the citus query.
+
+```sql
+select * from citus_add_node('new-node', port);
+```
+Check wether if the new-node is added correctely in the cluster.
+```sql
+select master_get_active_worker_nodes();
+-  master_get_active_worker_nodes
+-- --------------------------------
+--  (new-node,5432)
+-- (1 row)
+```
+Let create MobilityDB table and distribute it on column_dist in order to create shards by hashing the column_dist values. If no nodes added on the cluster than the distribution is seen as single node citus otherwise is multi nodes citus.
+
+```sql
+CREATE TABLE mobilitydb_table(
+column_dist integer,
+T timestamp,
+Latitude float,
+Longitude float,
+Geom geometry(Point, 4326)
+);
+
+SELECT create_distributed_table('mobilitydb_table', 'column_dist');
+```
+fill free to fill the table mobilitydb_table before or after the distribution. At this stage you can run MobilityDB queries on the citus cluster.
+
+
+
+### Deploy scalemobilitydb using citus manager
+This deployment is similar to the last one except that there is a manager node. It simply listens for new containers tagged with the worker role, then adds them to the config file in a volume shared with the master node.
+In the same repository scale_mobilitydb run the command 
+
+
+- Running the image as Citus cluster using docker-compose command
+
+
+
