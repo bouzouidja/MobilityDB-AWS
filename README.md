@@ -24,7 +24,7 @@ Requirements
 
 
 
-Deployment using Citus cluster
+Deployment using Citus cluster using AWS EC2 instances
 ------------
 
 ### Build Citus on top of MobilityDB 
@@ -176,14 +176,16 @@ At this stage we can manage our AWS services remotely from our machine through t
 eksctl create cluster \
  --name mobilitydb-cluster \
  --version 1.20 \
- --region eu-west-3\
- --nodegroup-name linux-nodes\
- --node-type m5.large\
- --nodes 3
+ --region eu-west-3 \
+ --nodegroup-name linux-nodes \
+ --node-type m5.large \
+ --ssh-access \
+ --nodes 3 
+ --nodes-min=2 --nodes-max=5 
 ```
 
 In the region option you can use the nearest region from your location.
-In the node-type option we define the type of the ressource for the created node. AWS provide a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:) 
+In the node-type option we define the type of the ressource for the created node. AWS provide a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:). The nodes-min and node-max options used for the auto scaling node group. 
 
 The creation process take about a 20 minutes of time.
 
@@ -301,15 +303,59 @@ kubectl exec -it  postgres-98c7c5945-rrfwc -- psql -h 192.168.56.190 -U postgres
 
 
 ```
+7. Run mobilitydb queries
+.....
+In order to make the MobilityDb queries more powerfull, we have used the single node citus that create shards for distributed table,
 
 
 
+As we have a complex MobilityDB queries, we may use the Vertical Autoscaler and the Horizontal Autoscaler to optimize the cost according to the query needs.
+
+8. Vertical Pod scaling using the Autoscaler 
+The vertical scaling that provide aws it's a mechanism allows us to adjust automatically the pods ressources. This adjustment decrease the cluster cost and can free up cpu and memory to other pods that may need it. The vertical autoscaler analyze the pods demand in order to see if the CPU and memory requirements are appropriate. If adjustments are needed, the vpa-updater relaunches the pods with updated values. 
+
+To deploy the vertical autoscaler, as following is the steps:
+```bash
+git clone https://github.com/kubernetes/autoscaler.git
+cd autoscaler/vertical-pod-autoscaler/
+``` 
+deploy the autoscaler pods to your cluster
+```bash
+
+./hack/vpa-up.sh
+```
+
+Check the vertical autoscaler pods 
+
+```bash
+kubectl get pods -n kube-system
+
+# NAME                                       READY   STATUS    RESTARTS   AGE
+# aws-node-rx54z                             1/1     Running   0          17d
+# aws-node-ttf68                             1/1     Running   0          17d
+# coredns-544bb4df6b-8ccvm                   1/1     Running   0          17d
+# coredns-544bb4df6b-sbqhz                   1/1     Running   0          17d
+# kube-proxy-krz8w                           1/1     Running   0          17d
+# kube-proxy-lzm4g                           1/1     Running   0          17d
+# metrics-server-9f459d97b-vtd6n             1/1     Running   0          3d11h
+# vpa-admission-controller-6cd546c4f-g94vr   1/1     Running   0          38h
+# vpa-recommender-6855ff754-f4blx            1/1     Running   0          38h
+# vpa-updater-9fd7bfbd5-n9hpn                1/1     Running   0          38h
+
+``` 
+
+9. Horizontal Pod scaling using the Autoscaler
 
 
+The horizontal Autoscaler that provides AWS allows to increase the number of pods within the cluster, it's a replication controller. This can help your applications scale out to meet increased demand or scale in when resources are not needed, the Horizontal Pod Autoscaler scales your application in or out to try to meet that target.
+
+Before deploying the Horizontal autoscaler, we need the Kubernetes Metric server.
+The metric server is an API that collect the ressources statistics from the cluster and expose them for the use of the autoscaler. For more information about the metric server see [here](https://github.com/kubernetes-sigs/metrics-server).
 
 
+Deploy the metric server
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
-7. Vertical Pod Autoscaler  
-In order to make the MobilityDb queries more powerfull, we have used the single node citus that create shards for distributed table, and then we have used the a vertical autoscaler provided by EKS in wich the ressources (cpu, RAM) is reserved or free up to or from the cluster.   
-
-8. Horizontal Pod Autoscaler
+``` 
+  
