@@ -361,7 +361,31 @@ This deployment is similar to the last one except that there is a manager node. 
 In the same repository scale_mobilitydb run the command 
 
 
-- Running the image as Citus cluster using docker-compose command
+- Running the image as Citus cluster using this following
 
+```bash
+docker-compose -p scale-mobilitydb up
 
+# Creating network "citus_default" with the default driver
+# Creating citus_worker_1
+# Creating citus_master
+# Creating citus_config
+# Attaching to citus_worker_1, citus_master, citus_config
+# worker_1    | The files belonging to this database system will be owned by user "postgres".
+# worker_1    | This user must also own the server process.
+# ...
+
+```
+
+You can run more workers in order to scale the citus cluster by running:
+
+```bash
+docker-compose -p scale-mobilitydb scale worker=5
+
+# Creating and starting 2 ... done
+# Creating and starting 3 ... done
+# Creating and starting 4 ... done
+# Creating and starting 5 ... done
+
+```
 
