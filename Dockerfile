@@ -71,6 +71,11 @@ RUN cd /usr/local/src/ \
 	make -j$(nproc) && \
 	make install
 
+# Get ais dataset to test MobilityDb queries
+RUN git clone git@github.com:bouzouidja/scale_mobilitydb.git \
+&& cd scale_mobilitydb/data/ \
+&& sudo cp mobility_dataset.csv /var/lib/postgresql/data/
+
 
 # add citus to default PostgreSQL config
 RUN echo "shared_preload_libraries='citus'" >> /usr/share/postgresql/postgresql.conf.sample
