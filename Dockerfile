@@ -72,7 +72,7 @@ RUN cd /usr/local/src/ \
 	make install
 
 # Get ais dataset to test MobilityDb queries
-RUN git clone git@github.com:bouzouidja/scale_mobilitydb.git \
+RUN git clone https://github.com/bouzouidja/scale_mobilitydb.git \
 && cd scale_mobilitydb/data/ \
 && sudo cp mobility_dataset.csv /var/lib/postgresql/data/
 
