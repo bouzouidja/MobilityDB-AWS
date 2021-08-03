@@ -74,7 +74,7 @@ RUN cd /usr/local/src/ \
 	make install
 
 # ADD file from url
-ADD https://github.com/bouzouidja/scale_mobilitydb/tree/master/data/mobility_dataset.csv  /var/lib/postgresql/data/
+ADD https://github.com/bouzouidja/scale_mobilitydb/tree/master/data/mobility_dataset.csv  /var/lib/postgresql/
 
 ADD https://github.com/bouzouidja/scale_mobilitydb/tree/master/data/mobility_dataset.csv  /mnt/data/
 
