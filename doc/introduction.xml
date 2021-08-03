@@ -6,9 +6,9 @@
 There are many cloud services around the world as AWS, Azure, Google cloud, IBM cloud, Saleforce and so on. In this study we will deploy the MobilityDB on AWS cloud services.
 The AWS cloud provides a large services, sometime it difficult to make a choice between them in order to adjust it to our application.
 In order to scaling MobilityDB, we need to keep in mind of two kind of resources. The volume storage and the computation units.
-In addition to those two resources we need an orchestrator that manage cluster and ensure the availability. Again the AWS provides different orchestrator like ECS for Elastic Container Service, an EKS for Elastic Kubernetes Service, ECR for Elastic Container Registry. The orchestrator used in this study is the EKS one.
+In addition to those two resources we need an orchestrator that manage cluster and ensure the availability. Again the AWS provides different orchestrator like ECS for Elastic Container Service, an EKS for Elastic Kubernetes Service. The orchestrator used in this study is the EKS one.
 There is another tool that may increase the MobilityDB performance, this one is away from the cloud services.
-The citus Data for distribution. Their idea is to partitioning tables on different shards. This mechanism allow the query plan to rooting rapidly the queries to the right data shard based on the hash value. In following we will see the different kind of orchestrator that may support our deployment and than describe the architecture to deploying the scale of MobilityDB.   
+The citus Data for distribution. Their idea is to partitioning tables on different shards. This mechanism allow the query plan to rooting rapidly the queries to the right data shard based on the hash value. In following we will see the different kind of orchestrator that may support our deployment and then describe the architecture to deploying the scale of MobilityDB.   
 </para>
 
 </chapter>	
