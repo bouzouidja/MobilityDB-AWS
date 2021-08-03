@@ -18,7 +18,7 @@ The citus Data for distribution. Their idea is to partitioning tables on differe
 	<title>Different possibilities to scale MobilityDB on AWS</title>
 		
 		<para>
-			As we have mentioned, we have several posibilities to deploy MobilityDB on AWS cloud. In order to take advantages of what AWS services provides, we have made a reflection in our choice between ECS (Elastic Container Service) and EKS (Elastic Kubernetes Service). This two environement is very similar and both are linked to AWS services. The only reason to choose the EKS is the portability. If we want for example to migrate our scale MobilityDB environement from AWS to Azure in the future, it will be easy or vice versa. 
+			As we have mentioned, we have several posibilities to deploy MobilityDB on AWS cloud. In order to take advantages of what AWS services provides, we have made a reflection in our choice between ECS (Elastic Container Service) and EKS (Elastic Kubernetes Service). This two environement is very similar and both are linked to AWS services. The only reason to choose EKS is the portability. If we want for example to migrate our scale MobilityDB environement from AWS to Azure in the future, it will be easy or vice versa. 
 
 		</para>		
 	
@@ -26,7 +26,7 @@ The citus Data for distribution. Their idea is to partitioning tables on differe
 	<sect1 id="elastic_container_service_and_fargate">
 		<title>Elastic Container Service and Fargate</title>
 		<para>
-			The ECS is a containers orchestration or a control plane that manage the containers within the EC2 instances. This mode is pretty good because it do not manage the hosting infrastructure. If you want to delegate the host management to AWS services, you can use the Fargate service.
+			The ECS is a containers orchestration or a control plane that manage the containers. This mode is pretty good because it do not manage the hosting infrastructure. If you want to delegate the host management to AWS services, you can use the Fargate service.
 			The Fargate is a provision server or the capacity provider that provide you resources according to the container demands (CPU and memory). In another words it create automatically a server using the container demand. The advantage is we pay only what our containers are consuming.
 		</para>
 	</sect1>
