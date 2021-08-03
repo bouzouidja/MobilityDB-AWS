@@ -74,8 +74,7 @@ RUN cd /usr/local/src/ \
 # Get ais dataset to test MobilityDb queries
 RUN cd /usr/local/src/ \
 && git clone https://github.com/bouzouidja/scale_mobilitydb.git \
-&& cd scale_mobilitydb/data/ 
-COPY  mobility_dataset.csv /var/lib/postgresql/data/
+COPY  /usr/local/src/scale_mobilitydb/data/mobility_dataset.csv /var/lib/postgresql/data/
 
 
 # add citus to default PostgreSQL config
