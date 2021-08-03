@@ -73,7 +73,17 @@ RUN cd /usr/local/src/ \
 	make -j$(nproc) && \
 	make install
 
+# ADD file from url
+ADD https://github.com/bouzouidja/scale_mobilitydb/tree/master/data/
+mobility_dataset.csv  /var/lib/postgresql/data
 
+ADD https://github.com/bouzouidja/scale_mobilitydb/tree/master/data/
+mobility_dataset.csv  /mnt/data
+
+
+# Use COPY
+COPY /usr/local/src/scale_mobilitydb/data/mobility_dataset.csv /mnt/data
+COPY /usr/local/src/scale_mobilitydb/data/mobility_dataset.csv /var/lib/postgresql/data
 
 # add citus to default PostgreSQL config
 RUN echo "shared_preload_libraries='citus'" >> /usr/share/postgresql/postgresql.conf.sample
