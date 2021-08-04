@@ -2,91 +2,56 @@
 <chapter id ="introduction">
 	<title>Introduction</title>
 
-	<para>
-There are many cloud services around the world as AWS, Azure, Google cloud, IBM cloud, Saleforce and so on. In this study we will deploy the MobilityDB on AWS cloud services.
-The AWS cloud provides a large services, sometime it difficult to make a choice between them in order to adjust it to our application.
-In order to scaling MobilityDB, we need to keep in mind of two kind of resources. The volume storage and the computation units.
-In addition to those two resources we need an orchestrator that manage cluster and ensure the availability. Again the AWS provides different orchestrator like ECS for Elastic Container Service, EKS for Elastic Kubernetes Service. The orchestrator used in this study is the EKS one.
-There is another tool that may increase the MobilityDB performance, this one is away from the cloud services.
-The citus Data for distribution. Theirs idea is to partitioning tables on different shards. This mechanism allow the query plan to rooting rapidly the queries to the right data shard based on the hash value. In following we will see the different kind of orchestrator that may support our deployment and then we describes the installation manual and architecture of different layers to make the deployment easy to understunding.   
-</para>
-
+	<para>There are many cloud services around the world as AWS, Azure, Google cloud, IBM cloud, Saleforce and so on. In this study we will deploy the MobilityDB on AWS cloud services.</para>
+	<para> The AWS cloud provides a large services, sometime it difficult to make a choice between them in order to adjust it to our application.
+	In order to scaling MobilityDB, we need to keep in mind of two kind of resources. The volume storage and the computation units.</para>
+	<para>In addition to those two resources we need an orchestrator that manage cluster and ensure the availability. Again the AWS provides different orchestrator like ECS for Elastic Container Service, EKS for Elastic Kubernetes Service. The orchestrator used in this study is the EKS one.
+	There is another tool that may increase the MobilityDB performance, this one is away from the cloud services. Citus Data for distribution. Theirs idea is to partitioning tables on different shards. This mechanism allow the query plan to rooting rapidly the queries to the right data shard based on the hash value. In following we will see the different kind of orchestrator that may support our deployment and then we describes the installation manual and architecture of different layers to make the deployment easy to understunding.</para>
 </chapter>	
-
 	
 <chapter id="dpsm">
 	<title>Different possibilities to scale MobilityDB on AWS</title>
-		
-		<para>
-			As we have mentioned, we have several posibilities to deploy MobilityDB on AWS cloud. In order to take advantages of what AWS services provides, we have made a reflection in our choice between ECS (Elastic Container Service) and EKS (Elastic Kubernetes Service). This two environement is very similar and both are linked to AWS services. The only reason to choosing EKS is the portability. If we want for example to migrate our scale MobilityDB environement from AWS to Azure in the future, it will be easy or vice versa. 
-
-		</para>		
-	
-
+		<para>As we have mentioned, we have several posibilities to deploy MobilityDB on AWS cloud. In order to take advantages of what AWS services provides, we have made a reflection in our choice between ECS (Elastic Container Service) and EKS (Elastic Kubernetes Service). This two environement is very similar and both are linked to AWS services. The only reason to choosing EKS is the portability. If we want for example to migrate our scale MobilityDB environement from AWS to Azure in the future, it will be easy or vice versa.</para>
 	<sect1 id="elastic_container_service_and_fargate">
 		<title>Elastic Container Service and Fargate</title>
-		<para>
-			The ECS is a containers orchestration or a control plane that manage our containers. This mode is pretty good because it do not manage the hosting infrastructure. If you want to delegate the host management to AWS services, you can use the Fargate service.
-			The Fargate is a provision server or the capacity provider that provides you resources according to the container demands (CPU and memory). In another words it create automatically a server using the container on demand. The advantage is we pay only what our containers are consuming.
-		</para>
+		<para>The ECS is a containers orchestration or a control plane that manage our containers. This mode is pretty good because it do not manage the hosting infrastructure. If you want to delegate the host management to AWS services, you can use the Fargate service.The Fargate is a provision server or the capacity provider that provides you resources according to the container demands (CPU and memory). In another words it create automatically a server using the container on demand. The advantage is we pay only what our containers are consuming.</para>
 	</sect1>
-
-
 	<sect1 id="elastic_kubernetes_service">
 		<title>Elastic Kubernetes Service</title>
-		<para>
-			The EKS is a AWS service that allow us to manage a Kubernetes cluster on AWS ecosystem. The advantage of using the EKS instead the ECS is a portability of your Kubernetes cluster that mean if we want to migrate our cluster to AWS it will be very easy. Even to migrate it to Azure or Google Cloud infrastructure. Another advantage is the popularity of Kubernetes with a large community.
-			The EKS is a control plane that can scheduling and orchestrating a cluster. When you create a EKS, AWS provision a Master node in the background linked with all AWS services as CloudWatch for monitoring, Elastic Load Balancer for load balancing, IAM for users and permissions and VPC for networking. Using the EKS service you can replicate the Master node on other  (link to regions aws) <ulink url="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html">availability zone and regions</ulink> In our deployment guide we have used the region Europe(Paris) eu-west-3, the 3 means that are 3 availability zones in the region.
-			After creating the Cluster(master node) we need to create a workers nodes with EC2 instances and join them to the cluster. EKS service allow us to semi manage the workers nodes using the node group option. If we want to fully manage our workers nodes, again we can use the AWS Fargate provision.
-		</para>
+		<para>The EKS is a AWS service that allow us to manage a Kubernetes cluster on AWS ecosystem. The advantage of using the EKS instead the ECS is a portability of your Kubernetes cluster that mean if we want to migrate our cluster to AWS it will be very easy. Even to migrate it to Azure or Google Cloud infrastructure. Another advantage is the popularity of Kubernetes with a large community.</para>
+		<para>The EKS is a control plane that can scheduling and orchestrating a cluster. When you create a EKS, AWS provision a Master node in the background linked with all AWS services as CloudWatch for monitoring, Elastic Load Balancer for load balancing, IAM for users and permissions and VPC for networking. Using the EKS service you can replicate the Master node on other  (link to regions aws) <ulink url="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html">availability zone and regions</ulink> In our deployment guide we have used the region Europe(Paris) eu-west-3, the 3 means that are 3 availability zones in the region.</para>
+		<para>After creating the Cluster(master node) we need to create a workers nodes with EC2 instances and join them to the cluster. EKS service allow us to semi manage the workers nodes using the node group option. If we want to fully manage our workers nodes, again we can use the AWS Fargate provision.</para>
 	</sect1>
 
 	<sect1 id="citus_cluster_using_the_AWS_EC2_instance">
 		<title>Citus cluster using the AWS EC2 instance</title>
-		<para>
-			There is another way to scale our MobilityDB through the Citus cluster using Citus docker image. The idea is simply to create a group of EC2 instances, choose one of them as a Master node and join the worker nodes to the same Master node. Citus docker version provides 3 types of node, the Master, worker and the manager that has as role listening to new worker nodes in the same subnet in order to join them automatically to the Master node. This kind of deployment does not benefit from the AWS services comparing EKS or ECS.  
-		</para>
-		
+		<para>There is another way to scale our MobilityDB through the Citus cluster using Citus docker image. The idea is simply to create a group of EC2 instances, choose one of them as a Master node and join the worker nodes to the same Master node. Citus docker version provides 3 types of node, the Master, worker and the manager that has as role listening to new worker nodes in the same subnet in order to join them automatically to the Master node. This kind of deployment does not benefit from the AWS services comparing EKS or ECS.</para>
 	</sect1>
-
 </chapter>
 
 <chapter id="architecture">
 	<title>Deployment using AWS EKS service</title>
-	
-		<para>
-			In this part we will show you the different layers and components of our deployment in order to scale the MobilityDB using EKS service.  
-		</para>
+		<para>In this part we will show you the different layers and components of our deployment in order to scale the MobilityDB using EKS service.</para>
 		
 	<sect1 id="EKS vertical container view">
 		<title>EKS vertical container view</title>
-		<para>
-			As you can see in the following figure we have prepared a docker image that contains the MobilityDB environment and Citus environment built on top of it. 
-  
-		</para>
-
+		<para>As you can see in the following figure we have prepared a docker image that contains the MobilityDB environment and Citus environment built on top of it.</para>
+	
 		<sect2 id="build_scale_mobilitydb_image">
 			<title>Build Citus on top of MobilityDB</title>
-			<para>
-					This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using kubectl command from your host machine if you follow the deployment on AWS EKS cluster.  
-			<programlisting>
-					git clone https://github.com/bouzouidja/scale_mobilitydb.git
-					cd scale_mobilitydb
-					docker build -t bouzouidja/scalemobilitydb .
-
+			<para>This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using kubectl command from your host machine if you follow the deployment on AWS EKS cluster.</para>  
+			<programlisting xml:space="preserve">
+git clone https://github.com/bouzouidja/scale_mobilitydb.git
+cd scale_mobilitydb
+docker build -t bouzouidja/scalemobilitydb .
 			</programlisting>
 
-			Or you can pull the image from directely from the docker hub
-			<programlisting>
-				
-				docker pull bouzouidja/scalemobilitydb
+			<para>Or you can pull the image from directely from the docker hub</para>
+			<programlisting xml:space="preserve">
+docker pull bouzouidja/scalemobilitydb
 			</programlisting>
-
-			</para>
-
 		</sect2>
 		<para>
-
 			<mediaobject>
 				<imageobject>
 					<imagedata align="center" fileref='images/VerticalContainer.jpg' format="JPG" width='200pt' />
@@ -95,110 +60,91 @@ The citus Data for distribution. Theirs idea is to partitioning tables on differ
 		</para>
 	</sect1>
 
-
-
 	<sect1 id="kubernetes_cluster_view">
 		<title>Kubernetes Cluster view</title>
-		<para>
-			After preparing our MobilityDB scale, we can easily deploy it on worker node in Kubernetes cluster using the kubectl command. In the following figure we will show you the installation maual of requirements and deployment. Finnaly we have made a diagram to show you a small Kubernetes cluster that make MobilityDB scaling. We have a control Plane or the Master node and two workers nodes. The worker in the right it can be seen as storage node, the DS stand for dense storage. The worker in the left it can be seen as compute node, the DC stand for dense compute. As you can see a pod is created within the worker node using the scalemobilitydb container prepared. Once you have configure this Kubernetes architecture, you can deploy it in any cloud service platform that provides Kubernetes. Maybe you are asking a question why there is a storage node?. In my opinion the data need to be loaded within a cluster before using the MobilityDB queries. Else another AWS services may be explored as EMR for Elastic MapReduce and AWS Apache Spark or AWS S3 for Simple Storage Service to make web-scale computing easier.  
-  
-		</para>
-
+		<para>After preparing our MobilityDB scale, we can easily deploy it on worker node in Kubernetes cluster using the kubectl command. In the following figure we will show you the installation maual of requirements and deployment. Finnaly we have made a diagram to show you a small Kubernetes cluster that make MobilityDB scaling. We have a control Plane or the Master node and two workers nodes. The worker in the right it can be seen as storage node, the DS stand for dense storage. The worker in the left it can be seen as compute node, the DC stand for dense compute. As you can see a pod is created within the worker node using the scalemobilitydb container prepared.</para> 
+		<para> Once you have configure this Kubernetes architecture, you can deploy it in any cloud service platform that provides Kubernetes. Maybe you are asking a question why there is a storage node?. In my opinion the data need to be loaded within a cluster before using the MobilityDB queries. Else another AWS services may be explored as EMR for Elastic MapReduce and AWS Apache Spark or AWS S3 for Simple Storage Service to make web-scale computing easier.</para>
 
 		<sect2 id="Install_requirements">
 			<title>Install requirements</title>
 			<sect3 id="Install kubectl">
 				<title>Install kubectl</title>
-				<programlisting>
-					
-					curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
-					# Check the SHA-256 sum for your downloaded binary.
-					openssl sha1 -sha256 kubectl
+				<programlisting xml:space="preserve">
+curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+# Check the SHA-256 sum for your downloaded binary.
+openssl sha1 -sha256 kubectl
 
-					# Apply execute permissions to the binary.
-					chmod +x ./kubectl
+# Apply execute permissions to the binary.
+chmod +x ./kubectl
 
-					# Copy the binary to a folder in your PATH. If you have already installed a version of kubectl, then we recommend creating a $HOME/bin/kubectl and ensuring that $HOME/bin comes first in your $PATH.
+# Copy the binary to a folder in your PATH. If you have already installed a version of kubectl, then we recommend creating a $HOME/bin/kubectl and ensuring that $HOME/bin comes first in your $PATH.
 
-					mkdir -p $HOME/bin &amp;&amp; cp ./kubectl $HOME/bin/kubectl &amp;&amp; export PATH=$PATH:$HOME/bin
+mkdir -p $HOME/bin &amp;&amp; cp ./kubectl $HOME/bin/kubectl &amp;&amp; export PATH=$PATH:$HOME/bin
 
-					# (Optional) Add the $HOME/bin path to your shell initialization file so that it is configured when you open a shell. 
-					echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+# (Optional) Add the $HOME/bin path to your shell initialization file so that it is configured when you open a shell. 
+echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
 
-					# After you install kubectl , you can verify its version with the following command: 
-					kubectl version --short --client
+# After you install kubectl , you can verify its version with the following command: 
+kubectl version --short --client
 
 				</programlisting>
-
 			</sect3>
 			<sect3 id="Install_eksctl">
-				
 				<title>Install eksctl</title>
 				Download and extract the latest release of eksctl with the following command.
-				<programlisting>
-					
-					 
-					curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-					# Move the extracted binary to /usr/local/bin. 
-					sudo mv /tmp/eksctl /usr/local/bin
-					# Test that your installation was successful with the following command.
-					eksctl version
-
+				<programlisting xml:space="preserve">
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+# Move the extracted binary to /usr/local/bin. 
+sudo mv /tmp/eksctl /usr/local/bin
+# Test that your installation was successful with the following command.
+eksctl version
 				</programlisting>
 			</sect3>
 			
 			<sec3 id="aws_CLI">
-			<title>Install and configure the aws CLI (Command Line Interface) environment</title>
-			<programlisting>
-				
+				<title>Install and configure the aws CLI (Command Line Interface) environment</title>
+				<programlisting xml:space="preserve">
+	curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+	unzip awscliv2.zip
+	sudo ./aws/install
+	aws --version
+	# aws-cli/2.1.29 Python/3.7.4 Linux/4.14.133-113.105.amzn2.x86_64 botocore/2.0.0
+				</programlisting>
 
 
-				curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-				unzip awscliv2.zip
-				sudo ./aws/install
-				aws --version
-				# aws-cli/2.1.29 Python/3.7.4 Linux/4.14.133-113.105.amzn2.x86_64 botocore/2.0.0
+				<para>AWS requires that all incoming requests are cryptographically signed. This are the most important security innformation need to be set up in you host machine in order to manage you aws services remotely.</para> 
 
 
-			</programlisting>
+				<itemizedlist>
+					<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds">Access Key ID</ulink></listitem>
+					<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds">Secret access Key</ulink></listitem>
+					<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-region">AWS Region</ulink></listitem>
+					<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-format">Output Format</ulink></listitem>
+				</itemizedlist>
 
+				<para> Let configure some mandatory information in order to use the aws services.</para>
 
-AWS requires that all incoming requests are cryptographically signed. This are the most important security innformation need to be set up in you host machine in order to manage you aws services remotely. 
-
-
-<itemizedlist>
-			<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds">Access Key ID</ulink></listitem>
-			<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds">Secret access Key</ulink></listitem>
-			<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-region">AWS Region</ulink></listitem>
-			<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-format">Output Format</ulink></listitem>
-		</itemizedlist>
-
-Let configure some mandatory information in order to use the aws services.
-
-Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS console</ulink>
-		<itemizedlist>
-			<listitem>In the navigation pane, choose Users.</listitem>
-			<listitem>Choose the name of the user whose access keys you want to create, and then choose the Security credentials tab.</listitem>
-			<listitem>In the Access keys section, choose Create access key.</listitem>
-			<listitem>To view the new access key pair, choose Show. You will not have access to the secret access key again after this dialog box closes. Save the access key id and the secret access key somewhere.</listitem>
-		</itemizedlist>
-
-
-			Now run aws configure and copy past them in their corresponding parameter
-			<programlisting>
-			aws configure
-			# AWS Access Key ID [****************FZQ2]: 
-			# AWS Secret Access Key [****************RVKZ]: 
-			# Default region name [eu-west-3]: 
-			# Default output format [None]: 
-			</programlisting>
-			You can use the default region as the nearest one from you. In my case i used the eu-west-3 region (Paris).
-			At this stage we can manage our AWS services remotely from our machine through the credentials stored on the file located in: 
-			<programlisting>
-				~/.aws/credentials
-			</programlisting>
-
-</sec3>
+				<para>Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS console</ulink>
+				<itemizedlist>
+					<listitem>In the navigation pane, choose Users.</listitem>
+					<listitem>Choose the name of the user whose access keys you want to create, and then choose the Security credentials tab.</listitem>
+					<listitem>In the Access keys section, choose Create access key.</listitem>
+					<listitem>To view the new access key pair, choose Show. You will not have access to the secret access key again after this dialog box closes. Save the access key id and the secret access key somewhere.</listitem>
+				</itemizedlist>
+				</para>
+				<para>Now run aws configure and copy past them in their corresponding parameter</para>
+				<programlisting xml:space="preserve">
+	aws configure
+	# AWS Access Key ID [****************FZQ2]: 
+	# AWS Secret Access Key [****************RVKZ]: 
+	# Default region name [eu-west-3]: 
+	# Default output format [None]: 
+				</programlisting>
+				<para>You can use the default region as the nearest one from you. In my case i used the eu-west-3 region (Paris). At this stage we can manage our AWS services remotely from our machine through the credentials stored on the file located in:</para>
+				<programlisting xml:space="preserve">
+	~/.aws/credentials
+				</programlisting>
+			</sec3>
 
 
 
@@ -227,7 +173,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 			<title>Create an Amazon EKS cluster (control plane)</title>
 
 				Run the following eksctl in order to create a cluster using Elastic Kubernetes Service
-				<programlisting>
+				<programlisting xml:space="preserve">
 					eksctl create cluster \
 				 --name mobilitydb-cluster \
 				 --version 1.20 \
@@ -248,13 +194,13 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 				If you want to delete the cluster with all the ressources created just use:
 
-				<programlisting>eksctl delete cluster --name mobilitydb-cluster</programlisting>
+				<programlisting xml:space="preserve">eksctl delete cluster --name mobilitydb-cluster</programlisting>
 
 
 
 				View the cluster's ressources.
 
-				<programlisting>
+				<programlisting xml:space="preserve">
 					
 					kubectl get nodes
 				# You should see your EC2 node as this:
@@ -286,7 +232,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 		When you create a EKS cluster, by default the PersistentVolume is set to gp2 (General Purpose SSD driver). It is derived from the Amazon EBS (Elastic Block Store) class.
 
 		Use this command to see the default storage class.
-		<programlisting>kubectl get storageclass
+		<programlisting xml:space="preserve">kubectl get storageclass
 		# NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
 		# gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  15d
 		</programlisting>
@@ -296,7 +242,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 		Finnaly the service instance used to expose our MobilityDB workload. All thoses configuration can be updated according to your workload needs.
 
 		Putting it all together in mobilitydb-workload.yaml file. Run this command to initialize all the instances. 
-		<programlisting>kubectl apply -f mobilitydb-workload.yaml
+		<programlisting xml:space="preserve">kubectl apply -f mobilitydb-workload.yaml
 
 		# deployment.apps/scale-mobilitydb created
 		# persistentvolume/postgres-pv-volume unchanged
@@ -307,7 +253,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 
 		Now you should see all instances running.
-		<programlisting>kubectl get all
+		<programlisting xml:space="preserve">kubectl get all
 
 		# NAME                                    READY   STATUS    RESTARTS   AGE
 		# pod/scale-mobilitydb-7d745544dd-dkm7k   1/1     Running   0          43s
@@ -327,7 +273,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 		At this stage you can run your psql client to confirm that the scale-mobilitydb is deployed successfully.
 		To run the psql, we need to know on which node the MobilityDB pod is running. the following command show details informations including the ip address that host the scale-mobilitydb.  
-		<programlisting>
+		<programlisting xml:space="preserve">
 			
 			kubectl get pod -owide
 
@@ -341,7 +287,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 		As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use this command to connect to postgres database, the password for postgres user is postgres. We can run our psql client within the pod scale-mobilitydb to confirm that citus and mobilitydb extension it's well created.
 
-		<programlisting>
+		<programlisting xml:space="preserve">
 
 			kubectl exec -it  scale-mobilitydb-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U postgres -p 5432 postgres
 
@@ -378,7 +324,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 	Let select some aisinput records.
 
-	<programlisting> 
+	<programlisting xml:space="preserve"> 
 
 
 	# postgres=# select t, mmsi, geom from aisinput limit 5 ; 
@@ -395,7 +341,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 
 	Getting the shards of the AISInput table.
-	<programlisting>
+	<programlisting xml:space="preserve">
 		
 	# postgres=# SELECT shardid, table_name, shard_size FROM citus_shards limit 5 ;
 	#  shardid | table_name | shard_size 
@@ -429,7 +375,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 	To deploy the vertical autoscaler, in following is the steps:
 
 
-	<programlisting>
+	<programlisting xml:space="preserve">
 		
 		git clone https://github.com/kubernetes/autoscaler.git
 		cd autoscaler/vertical-pod-autoscaler/
@@ -437,14 +383,14 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 	deploy the autoscaler pods to your cluster
 
-	<programlisting>
+	<programlisting xml:space="preserve">
 		./hack/vpa-up.sh
 	</programlisting>
 
 
 	Check the vertical autoscaler pods 
 
-	<programlisting>
+	<programlisting xml:space="preserve">
 	Kubectl get pods -n kube-system
 
 	# NAME                                       READY   STATUS    RESTARTS   AGE
@@ -471,7 +417,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 		The metric server is an API that collect the ressources statistics from the cluster and expose them for the use of the autoscaler. For more information about the metric server see. <ulink url="https://github.com/kubernetes-sigs/metrics-server">here</ulink>
 
 	Deploy the metric server
-	<programlisting>
+	<programlisting xml:space="preserve">
 		
 		kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
@@ -532,7 +478,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 		Before doing this step you need to connect within your aws EC2 machine known as master node. We assume that we have already create and configure one aws EC2 host master node and some aws EC2 host worker node.
 		- You can run the image as standalone using docker run command, Execute this on all cluster's nodes.
 
-		<programlisting>
+		<programlisting xml:space="preserve">
 			sudo ssh -i YourKeyPairGenerated.pem ubuntu@EC2_Public_IP_Address
 
 			docker run --name scaledb_standalone -p 5432:5432 -e POSTGRES_PASSWORD=postgres bouzouidja/scalemobilitydb:latest 
@@ -544,7 +490,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 		After running the scalemobilitydb instance, you can add and scale manually your database using the citus query.
 
-		<programlisting>
+		<programlisting xml:space="preserve">
 			
 		select * from citus_add_node('new-node', port);
 		```
@@ -561,7 +507,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 		Let create MobilityDB table and distribute it on column_dist in order to create shards by hashing the column_dist values. If no nodes added on the cluster than the distribution is seen as single node citus otherwise is multi nodes citus.
 
-		<programlisting>
+		<programlisting xml:space="preserve">
 			
 			CREATE TABLE mobilitydb_table(
 			column_dist integer,
@@ -587,7 +533,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 		- Running the image as Citus cluster using this following
 
-		<programlisting>
+		<programlisting xml:space="preserve">
 			docker-compose -p scale-mobilitydb up
 
 		# Creating network "citus_default" with the default driver
@@ -605,7 +551,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 
 		You can run more workers in order to scale the citus cluster by running:
 
-		<programlisting>
+		<programlisting xml:space="preserve">
 		docker-compose -p scale-mobilitydb scale worker=5
 
 		# Creating and starting 2 ... done
