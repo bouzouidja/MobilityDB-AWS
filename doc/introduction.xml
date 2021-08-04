@@ -41,13 +41,13 @@
 			<title>Build Citus on top of MobilityDB</title>
 			<para>This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using kubectl command from your host machine if you follow the deployment on AWS EKS cluster.</para>  
 			<programlisting xml:space="preserve">
-git clone https://github.com/bouzouidja/scale_mobilitydb.git
-cd scale_mobilitydb
-docker build -t bouzouidja/scalemobilitydb .
+git clone https://github.com/bouzouidja/mobilitydb-on-aws.git
+cd mobilitydb-on-aws
+docker build -t bouzouidja/mobilitydb-on-aws .
 			</programlisting>
 			<para>Or you can pull the image from directely from the docker hub</para>
 			<programlisting xml:space="preserve">
-docker pull bouzouidja/scalemobilitydb
+docker pull bouzouidja/mobilitydb-on-aws:latest
 			</programlisting>
 			<para>
 			<mediaobject>
@@ -163,7 +163,7 @@ eksctl version
 			<para>Run the following eksctl in order to create a cluster using Elastic Kubernetes Service
 				<programlisting xml:space="preserve">
 eksctl create cluster \
---name mobilitydb-cluster \
+--name mobilitydb-on-aws-cluster \
 --version 1.20 \
 --region eu-west-3 \
 --nodegroup-name linux-nodes \
@@ -179,7 +179,7 @@ eksctl create cluster \
 			<para>The creation process takes about a 20 minutes of time.</para>
 			<para>If you want to delete the cluster with all the ressources created just use:</para>
 			<programlisting xml:space="preserve">
-eksctl delete cluster --name mobilitydb-cluster
+eksctl delete cluster --name mobilitydb-on-aws-cluster
 			</programlisting>
 			<para>View the cluster's ressources.
 				<programlisting xml:space="preserve">
@@ -195,7 +195,7 @@ kubectl get nodes
 
 		<sect2 id="Deploy_scaleMobilityDB_kubectl">
 			<title>Deploy our scaleMobilityDB image using the kubectl</title>
-			<para>We have prepared a manifest yaml file that defines the environment of our workload mobilityDB. It contains the basics information and configuration in order to configure our Kubernetes cluster. The deployment instance used to specify the scale-mobilitydb docker image and mount volume path. Finally the number of replications to our deployment in order to increase the availability.
+			<para>We have prepared a manifest yaml file that defines the environment of our workload mobilityDB. It contains the basics information and configuration in order to configure our Kubernetes cluster. The deployment instance used to specify the mobilitydb-on-aws docker image and mount volume path. Finally the number of replications to our deployment in order to increase the availability.
 				configMap instance defined the environement information (postgres user, password, database name).</para>
 			<para>The most important instances is the PersistentVolume and PersistentVolumeClaim.
 			The PersistentVolume parameter allows to define the class of storage, device and file system to store our mobilitydb data, it simply a workers nodes that store data. AWS provides different classes of storages, for more information see. <ulink url="https://docs.aws.amazon.com/eks/latest/userguide/storage.html">this </ulink>
@@ -208,45 +208,45 @@ kubectl get nodes
 				</programlisting></para>
 			<para>If you want to create your own storage class and set it as default, follow<ulink url="https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html">this guides </ulink>
 		Finnaly the service instance used to expose our MobilityDB workload. All thoses configuration can be updated according to your workload needs.</para>
-			<para>Putting it all together in mobilitydb-workload.yaml file. Run this command to initialize all the instances. 
+			<para>Putting it all together in mobilitydb-on-aws-workload.yaml file. Run this command to initialize all the instances. 
 				<programlisting xml:space="preserve">
-kubectl apply -f mobilitydb-workload.yaml
+kubectl apply -f mobilitydb-on-aws-workload.yaml
 
-# deployment.apps/scale-mobilitydb created
+# deployment.apps/mobilitydb-on-aws created
 # persistentvolume/postgres-pv-volume unchanged
 # persistentvolumeclaim/postgres-pv-claim unchanged
 # configmap/postgres-config unchanged
-# service/scale-mobilitydb created
+# service/mobilitydb-on-aws created
 				</programlisting>
 		Now you should see all instances running.
 				<programlisting xml:space="preserve">kubectl get all
 
 # NAME                                    READY   STATUS    RESTARTS   AGE
-# pod/scale-mobilitydb-7d745544dd-dkm7k   1/1     Running   0          43s
+# pod/mobilitydb-on-aws-7d745544dd-dkm7k   1/1     Running   0          43s
 
 # NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
 # service/kubernetes         ClusterIP   10.100.0.1      none       443/TCP          15d
-# service/scale-mobilitydb   NodePort    10.100.38.140   none        5432:30200/TCP   69m
+# service/mobilitydb-on-aws   NodePort    10.100.38.140   none        5432:30200/TCP   69m
 
 # NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
-# deployment.apps/scale-mobilitydb   1/1     1            1           69m
+# deployment.apps/mobilitydb-on-aws   1/1     1            1           69m
 
 # NAME                                          DESIRED   CURRENT   READY   AGE
-# replicaset.apps/scale-mobilitydb-7d745544dd   1         1         1       69m
+# replicaset.apps/mobilitydb-on-aws-7d745544dd   1         1         1       69m
 				</programlisting></para>
-			<para>At this stage you can run your psql client to confirm that the scale-mobilitydb is deployed successfully. To run the psql, we need to know on which node the MobilityDB pod is running. the following command show detail information including the ip address that host the scale-mobilitydb.  
+			<para>At this stage you can run your psql client to confirm that the mobilitydb-on-aws is deployed successfully. To run the psql, we need to know on which node the MobilityDB pod is running. the following command show detail information including the ip address that host the mobilitydb-on-aws.  
 				<programlisting xml:space="preserve">		
 kubectl get pod -owide
 
 # NAME                                READY   STATUS    RESTARTS   AGE     IP               NODE                                          NOMINATED NODE   READINESS GATES
-# scale-mobilitydb-7d745544dd-dkm7k   1/1     Running   0          100s   192.168.45.32   ip-192-168-60-10.eu-west-3.compute.internal   none           none
+# mobilitydb-on-aws-7d745544dd-dkm7k   1/1     Running   0          100s   192.168.45.32   ip-192-168-60-10.eu-west-3.compute.internal   none           none
 				</programlisting>
-			In my case, scale-mobilitydb have pod name as scale-mobilitydb-7d745544dd-dkm7k and is running in the node 192.168.45.32.
+			In my case, mobilitydb-on-aws have pod name as mobilitydb-on-aws-7d745544dd-dkm7k and is running in the node 192.168.45.32.
 
-			As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use this command to connect to postgres database, the password for postgres user is postgres. We can run our psql client within the pod scale-mobilitydb to confirm that citus and mobilitydb extension it's well created.</para>
+			As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use this command to connect to postgres database, the password for postgres user is postgres. We can run our psql client within the pod mobilitydb-on-aws to confirm that citus and mobilitydb extension it's well created.</para>
 			<para>
 				<programlisting xml:space="preserve">
-kubectl exec -it  scale-mobilitydb-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U postgres -p 5432 postgres
+kubectl exec -it  mobilitydb-on-aws-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U postgres -p 5432 postgres
 
 # Password for user postgres: 
 # psql (13.3 (Debian 13.3-1.pgdg100+1))
@@ -271,7 +271,7 @@ kubectl exec -it  scale-mobilitydb-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U 
 		<sect2 id="Run_MobilityDB_queries">
 			<title>Run MobilityDB queries</title>
 			<para>In order to make the MobilityDB queries more powerful, we have used the single node citus that create shards for distributed table.
-			We have prepared a simple dataset from AIS data i order to simulate MobilityDB queries. You can find it in <ulink url="https://github.com/bouzouidja/scale_mobilitydb/tree/master/data"> my repository</ulink> . You can mount more data in the /mnt/data on the host machine in the cloud to use the complex analytics queries.  
+			We have prepared a simple dataset from AIS data i order to simulate MobilityDB queries. You can find it in <ulink url="https://github.com/bouzouidja/mobilitydb_on_aws/tree/master/data"> my repository</ulink> . You can mount more data in the /mnt/data on the host machine in the cloud to use the complex analytics queries.  
 			Also, I have prepared the MobilityDB environment in order to use the queries of the AIS workshop.
 			The extension MobilityDB and citus are created, the table aisinput already created and filled with the mobility_dataset.csv. Finally the aisinput is sharded using citus distribute table as single node.</para> 
 			<para>Let select some aisinput records.
@@ -376,7 +376,7 @@ Kubectl get pods -n kube-system
 	<title>Deployment MobilityDB using Citus Cluster</title>
 	<para>In this part we defined a simple cluster of machine (EC2 instances) created by hand on AWS cloud as on premise version. So we have deployed the scalemobilitydb on all nodes and we choose one from them as Master and then make the others as worker by joining them to the Master by the sql command citus\_add\_node('IP/host of new worker', 5432);</para>
 	<sect1 id="Deploy_scale-mobilitydb_as_standalone">
-		<title>Deploy scale-mobilitydb as standalone</title>
+		<title>Deploy mobilitydb-on-aws as standalone</title>
 		<para>Before doing this step you need to connect within your aws EC2 machine known as the master node. We assume that we have already created and configure one aws EC2 host master node and some aws EC2 host worker node.
 			- You can run the image as standalone using docker run command, Execute this on all cluster's nodes.
 		<programlisting xml:space="preserve">
@@ -416,12 +416,12 @@ SELECT create_distributed_table('mobilitydb_table', 'column_dist');
 	<sect1 id="Deploy_scalemobilitydb_using_citus_manager">
 		<title>Deploy scalemobilitydb using citus manager</title>
 		<para>This deployment is similar to the last one except that there is a manager node have as role listen to new containers tagged with the worker role, then adds them to the config file in a volume shared with the master node.
-		In the same repository scale_mobilitydb run the command 
+		In the same repository mobilitydb_on_aws run the command 
 
 
 		- Running the image as Citus cluster using this following
 			<programlisting xml:space="preserve">
-docker-compose -p scale-mobilitydb up
+docker-compose -p mobilitydb-on-aws up
 
 # Creating network "citus_default" with the default driver
 # Creating citus_worker_1
@@ -434,7 +434,7 @@ docker-compose -p scale-mobilitydb up
 			</programlisting></para>
 		<para>You can run more workers in order to scale the citus cluster by running:
 			<programlisting xml:space="preserve">
-docker-compose -p scale-mobilitydb scale worker=5
+docker-compose -p mobilitydb-on-aws scale worker=5
 
 # Creating and starting 2 ... done
 # Creating and starting 3 ... done
