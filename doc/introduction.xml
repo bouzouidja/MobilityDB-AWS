@@ -33,7 +33,7 @@
 	<title>Deployment using AWS EKS service</title>
 		<para>In this part we will show you the different layers and components of our deployment in order to scale the MobilityDB using EKS service.</para>
 		
-	<sect1 id="EKS vertical container view">
+	<sect1 id="EKS_vertical_container_view">
 		<title>EKS vertical container view</title>
 		<para>As you can see in the following figure we have prepared a docker image that contains the MobilityDB environment and Citus environment built on top of it.</para>
 	
@@ -49,14 +49,14 @@ docker build -t bouzouidja/scalemobilitydb .
 			<programlisting xml:space="preserve">
 docker pull bouzouidja/scalemobilitydb
 			</programlisting>
-		</sect2>
-		<para>
+			<para>
 			<mediaobject>
 				<imageobject>
 					<imagedata align="center" fileref='images/VerticalContainer.jpg' format="JPG" width='200pt' />
 				</imageobject>
 			</mediaobject>
 		</para>
+		</sect2>
 	</sect1>
 
 	<sect1 id="kubernetes_cluster_view">
@@ -66,7 +66,7 @@ docker pull bouzouidja/scalemobilitydb
 
 		<sect2 id="Install_requirements">
 			<title>Install requirements</title>
-			<sect3 id="Install kubectl">
+			<sect3 id="Install_kubectl">
 				<title>Install kubectl</title>
 				<programlisting xml:space="preserve">
 curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
@@ -89,7 +89,7 @@ kubectl version --short --client
 			</sect3>
 			<sect3 id="Install_eksctl">
 				<title>Install eksctl</title>
-				Download and extract the latest release of eksctl with the following command.
+				<para>Download and extract the latest release of eksctl with the following command.
 				<programlisting xml:space="preserve">
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 # Move the extracted binary to /usr/local/bin. 
@@ -97,6 +97,7 @@ sudo mv /tmp/eksctl /usr/local/bin
 # Test that your installation was successful with the following command.
 eksctl version
 				</programlisting>
+				</para>
 			</sect3>
 			
 			<sect3 id="aws_CLI">
@@ -109,19 +110,23 @@ eksctl version
 	# aws-cli/2.1.29 Python/3.7.4 Linux/4.14.133-113.105.amzn2.x86_64 botocore/2.0.0
 				</programlisting>
 				<para>AWS requires that all incoming requests are cryptographically signed. This is the most important security information need to be set up in your host machine in order to manage you aws services remotely.</para> 
-				<itemizedlist>
-					<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds">Access Key ID</ulink></listitem>
-					<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds">Secret access Key</ulink></listitem>
-					<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-region">AWS Region</ulink></listitem>
-					<listitem><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-format">Output Format</ulink></listitem>
-				</itemizedlist>
+				<para>
+					<itemizedlist>
+					<listitem>
+						<para><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds">Access Key ID</ulink></para>
+					</listitem>
+					<listitem><para><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds">Secret access Key</ulink></para></listitem>
+					<listitem><para><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-region">AWS Region</ulink></para></listitem>
+					<listitem><para><ulink url="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-format">Output Format</ulink></para></listitem>
+					</itemizedlist>
+				</para>
 				<para> Let configure some mandatory information in order to use the aws services.</para>
 				<para>Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS console</ulink>
 				<itemizedlist>
-					<listitem>In the navigation pane, choose Users.</listitem>
-					<listitem>Choose the name of the user whose access keys you want to create, and then choose the Security credentials tab.</listitem>
-					<listitem>In the Access keys section, choose Create access key.</listitem>
-					<listitem>To view the new access key pair, choose Show. You will not have access to the secret access key again after this dialog box closes. Save the access key id and the secret access key somewhere.</listitem>
+					<listitem><para>In the navigation pane, choose Users.</para></listitem>
+					<listitem><para>Choose the name of the user whose access keys you want to create, and then choose the Security credentials tab.</para></listitem>
+					<listitem><para>In the Access keys section, choose Create access key.</para></listitem>
+					<listitem><para>To view the new access key pair, choose Show. You will not have access to the secret access key again after this dialog box closes. Save the access key id and the secret access key somewhere.</para></listitem>
 				</itemizedlist>
 				</para>
 				<para>Now run aws configure and copy past them in their corresponding parameter</para>
@@ -139,15 +144,15 @@ eksctl version
 			</sect3>
 
 		</sect2>
-		<para>
+		
+	</sect1>
+	<para>
 				<mediaobject>
 					<imageobject>
 						<imagedata align="center" fileref='images/KubernetCluster.jpg' format="JPG" width='250pt' />
 					</imageobject>
 				</mediaobject>
-		</para>
-	</sect1>
-
+	</para>
 	<sect1 id="EKS_control_plane_view">
 		<title>EKS control plane view</title>
 		<para>In following we will show you how to create an AWS EKS cluster, how to deploy the scale mobilitydb from your host using the eksctl and deploy the autoscalling. Finally, we have made a diagram to show a Kubernetes cluster created on AWS EKS service.</para>
@@ -342,16 +347,17 @@ Kubectl get pods -n kube-system
 					</programlisting>
 			There is a tutorial that show how to deploy the horizontal scaller using apache web server application  <ulink url="https://docs.aws.amazon.com/eks/latest/userguide/horizontal-pod-autoscaler.html">here</ulink></para>
 			</sect3>
+			
 		</sect2>
-		<para>
-			<mediaobject>
-				<imageobject>
-					<imagedata align="center" fileref='images/EKScluster.jpg' format="JPG" width='350pt' />
-				</imageobject>
-			</mediaobject>
-		</para>
+		
 	</sect1>
-
+	<para>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="center" fileref='images/EKScluster.jpg' format="JPG" width='350pt' />
+					</imageobject>
+				</mediaobject>
+	</para>
 	<sect1 id="EKS_cluster_replication_view">
 		<title>EKS cluster replication view</title>
 		<para>
@@ -435,8 +441,6 @@ docker-compose -p scale-mobilitydb scale worker=5
 # Creating and starting 4 ... done
 # Creating and starting 5 ... done
 		</programlisting></para>
-
-	</sect1>
 		<para>
 				<mediaobject>
 					<imageobject>
@@ -444,4 +448,6 @@ docker-compose -p scale-mobilitydb scale worker=5
 					</imageobject>
 				</mediaobject>
 		</para>	
+	</sect1>
+		
 </chapter>
