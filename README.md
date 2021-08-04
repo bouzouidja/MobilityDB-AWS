@@ -26,12 +26,19 @@ Requirements
 Both approachs need to build the scale-mobilitydb image.
 
 ### Build Citus on top of MobilityDB 
-This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in your host machine if you foollow the deployment on AWS EKS cluster.  
+This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using kubectl command from your host machine if you follow the deployment on AWS EKS cluster.  
 ```bash
 git clone https://github.com/bouzouidja/scale_mobilitydb.git
 cd scale_mobilitydb
-docker build -t scalemobilitydb/scalemobilitydb .
+docker build -t bouzouidja/scalemobilitydb .
 ```
+
+Or you can pull the image from directely from the docker hub
+
+```bash
+docker pull bouzouidja/scalemobilitydb
+```          
+
 
 
 
@@ -81,7 +88,7 @@ sudo ./aws/install
 aws --version
 # aws-cli/2.1.29 Python/3.7.4 Linux/4.14.133-113.105.amzn2.x86_64 botocore/2.0.0
 ```
-AWS requires that all incoming requests are cryptographically signed. Let configure some mandatory information in order to use the aws services.
+AWS requires that all incoming requests are cryptographically signed. This are the most important security innformation need to be set up in you host machine in order to manage you aws services remotely. 
 
 [Access Key ID](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds)
 
@@ -133,6 +140,8 @@ eksctl create cluster \
 
 In the region option you can use the nearest region from your location.
 In the node-type option you can define the type of the ressource for the created node. AWS provide a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:).
+
+ The ssh-access option useed to accept ssh connection if you want to access to you EC2 instances via ssh.
 You can customize your cluster creation using according to you needs, Run eksctl create cluster --help to see all the options.
 
 The creation process take about a 20 minutes of time.
@@ -342,7 +351,9 @@ Deploy the metric server
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
 ``` 
-  
+There is a tutorial that show how to deploy the horizontal scaller using apache web server application  
+[here](https://docs.aws.amazon.com/eks/latest/userguide/horizontal-pod-autoscaler.html)
+
 
 Deployment using Citus cluster using AWS EC2 instances
 ------------
