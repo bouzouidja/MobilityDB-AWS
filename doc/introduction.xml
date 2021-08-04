@@ -371,7 +371,7 @@ Navigate to <ulink url="https://console.aws.amazon.com/iam/home#/home">AWS conso
 	<title>Run MobilityDB queries</title>
 
 	In order to make the MobilityDB queries more powerfull, we have used the single node citus that create shards for distributed table.
-	We have prepared a simple dataset from AIS data i order to simulate MobilityDB queries. You can find it in<ulink url="https://github.com/bouzouidja/scale_mobilitydb/tree/master/data"> my repository</ulink> . You can mount more data in the /mnt/data of the host machine in the cloud to use the complex analytics queries.  
+	We have prepared a simple dataset from AIS data i order to simulate MobilityDB queries. You can find it in <ulink url="https://github.com/bouzouidja/scale_mobilitydb/tree/master/data"> my repository</ulink> . You can mount more data in the /mnt/data of the host machine in the cloud to use the complex analytics queries.  
 	Also i have prepared the MobilityDB environement in order to use the queries of the AIS workshop.
 	The extension MobilityDB and citus is created, the table aisinput already created and filled with the mobility_dataset.csv. Finally the aisinput is sharded using citus distribute table as single node. 
 
