@@ -372,7 +372,46 @@ As we have the host ip and the name of pod that run our scale MobilityDB environ
 <sec2 id="Run_MobilityDB_queries">
 	<title>Run MobilityDB queries</title>
 
-In order to make the MobilityDb queries more powerfull, we have used the single node citus that create shards for distributed table,
+In order to make the MobilityDB queries more powerfull, we have used the single node citus that create shards for distributed table.
+There is a simple dataset from AIS data is prepared to simulate MobilityDB queries. You can find it in<ulink url="https://github.com/bouzouidja/scale_mobilitydb/tree/master/data"> my repository</ulink> . You can mount more data in the /mnt/data of the host machine in the cloud to use the complex analytics queries.  
+Also i have prepared the MobilityDB environement in order to use the queries of the AIS workshop.
+The extension MobilityDB and citus is created, the table aisinput already created and filled with the mobility_dataset.csv. Finally the aisinput is sharded using citus distribute table as single node. 
+
+
+Let select some aisinput records.
+
+<programlisting> 
+
+
+# postgres=# select t, mmsi, geom from aisinput limit 5 ; 
+#           t          |   mmsi    |                        geom                        
+# ---------------------+-----------+----------------------------------------------------
+#  2018-01-11 00:00:00 | 265797590 | 0101000020E6100000E36F7B82C49E29405FEE93A300EF4B40
+#  2018-01-11 00:00:00 | 266205000 | 0101000020E6100000EA08E066F12A25403946B247A8DB4C40
+#  2018-01-11 00:00:00 | 219000615 | 0101000020E6100000894160E5D0AA2040D31742CEFBBB4B40
+#  2018-01-11 00:00:00 | 219005302 | 0101000020E6100000D447E00F3FEF2840C780ECF5EE794B40
+#  2018-01-11 00:00:00 | 565036000 | 0101000020E6100000EAAF5758708F1E40C6F99B5088644C40
+# (5 rows)
+</programlisting>
+
+
+
+Getting the shards of the AISInput table.
+<programlisting>
+	
+# postgres=# SELECT shardid, table_name, shard_size FROM citus_shards limit 5 ;
+#  shardid | table_name | shard_size 
+# ---------+------------+------------
+#  102008 | aisinput   |       8192
+#  102009 | aisinput   |       8192
+#  102010 | aisinput   |       8192
+#  102011 | aisinput   |       8192
+#  102012 | aisinput   |       8192
+#(5 rows)
+
+</programlisting>
+
+
 
 </sec2>
 

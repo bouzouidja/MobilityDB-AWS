@@ -63,8 +63,7 @@ RUN curl -s https://install.citusdata.com/community/deb.sh | bash \
 # Install MobilityDB 
 RUN cd /usr/local/src/ \
   && git clone https://github.com/MobilityDB/MobilityDB.git \
-  && git clone https://github.com/bouzouidja/scale_mobilitydb.git \
-  && cp /usr/local/src/scale_mobilitydb/data/mobility_dataset.csv /var/lib/postgresql/data/ \
+  && mkdir ais_dataset \
   && cd MobilityDB \
   && git checkout ${MOBILITYDB_GIT_HASH} \
   && mkdir build \
@@ -73,10 +72,9 @@ RUN cd /usr/local/src/ \
 	make -j$(nproc) && \
 	make install
 
-# ADD file from url
-ADD https://github.com/bouzouidja/scale_mobilitydb/tree/master/data/mobility_dataset.csv  /var/lib/postgresql/
+# Add an AIS dataset to test our MobilityDb queries
+ADD https://github.com/bouzouidja/scale_mobilitydb/tree/master/data/mobility_dataset.csv  /usr/local/src/ais_dataset
 
-ADD https://github.com/bouzouidja/scale_mobilitydb/tree/master/data/mobility_dataset.csv  /mnt/data/
 
 # add citus to default PostgreSQL config
 RUN echo "shared_preload_libraries='citus'" >> /usr/share/postgresql/postgresql.conf.sample
