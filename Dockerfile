@@ -81,7 +81,7 @@ RUN echo "shared_preload_libraries='citus'" >> /usr/share/postgresql/postgresql.
 
 
 # add scripts to run after initdb
-COPY ./initdb-mobilitydb.sh /docker-entrypoint-initdb.d/mobilitydb.sh
+COPY ./initdb-mobilitydb-on-aws.sh /docker-entrypoint-initdb.d/mobilitydb.sh
 RUN chmod +x /docker-entrypoint-initdb.d/mobilitydb.sh
 
 

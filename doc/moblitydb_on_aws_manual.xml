@@ -10,7 +10,7 @@
 ]>
 <book lang="en">
 	<bookinfo>
-		<title>Scale MobilityDB on AWS cloud User's Manual</title>
+		<title>MobilityDB-AWS User's Manual</title>
 		<author>
 			<firstname>Sid Ahmed</firstname>
 			<surname>BOUZOUIDJA</surname>
