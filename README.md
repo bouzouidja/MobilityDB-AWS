@@ -1,4 +1,4 @@
-# scalable MobilityDB on AWS could services
+# Scaling MobilityDB on AWS cloud services
 
 This repository provides a configuration files in order to deploy the MobilityDB on AWS cloud using EKS service and Citus cluster.
 
@@ -43,7 +43,7 @@ docker pull bouzouidja/mobilitydb-on-aws:latest
 
 
 
-Deployment using AWS EKS's Kubernetes service
+Deployment using EKS cluster
 ------------
 
 ### Install requirements
@@ -169,7 +169,7 @@ You should see three nodes created in the terminal and the AWS interface for EC2
 
 
 
-### Deploy our scaleMobilityDB image using the kubectl
+### Deploy mobilitydb_on_aws image using the kubectl
 
 We have prepared a manifest yaml file that define the environment of our workload mobilityDB. It contain the basics information and configuration in order to configure our Kubernetes cluster.
 The deployment instance used to specify the mobilitydb-on-aws docker image and mount volume path. Finnaly the number of replications to our deployment in order to increase the availability.
@@ -194,7 +194,7 @@ Finnaly the service instance used to expose our MobilityDB workload. All thoses 
 
 Putting it all together in mobilitydb-workload.yaml file. Run this command to initialize all the instances. 
 ```bash
-kubectl apply -f mobilitydb-workload.yaml
+kubectl apply -f mobilitydb-on-aws-workload.yaml
 
 # deployment.apps/mobilitydb-on-aws created
 # persistentvolume/postgres-pv-volume unchanged
@@ -284,7 +284,7 @@ Select some aisinput.
 # (5 rows)
 ```
 
-Getting the shards of the AISInput table.
+Getting some shards of the AISInput table.
 ```bash
 # postgres=# SELECT shardid, table_name, shard_size FROM citus_shards limit 5 ;
 #  shardid | table_name | shard_size 
@@ -401,7 +401,7 @@ fill free to fill the table mobilitydb_table before or after the distribution. A
 
 
 
-### Deploy scalemobilitydb using citus manager
+### Deploy mobilitydb-on-aws image using citus manager
 This deployment is similar to the last one except that there is a manager node. It simply listens for new containers tagged with the worker role, then adds them to the config file in a volume shared with the master node.
 In the same repository mobilitydb-on-aws run the command 
 
