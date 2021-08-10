@@ -163,19 +163,19 @@ kubectl get nodes
 # ip-192-168-95-188.eu-west-3.compute.internal   Ready    <none>   8m52s   v1.20.4-eks-6b7464
 
 ```
-You should see three nodes created in the terminal and the AWS interface for EC2 instances [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#Instances:instanceState=running)
+You should see three nodes created in the terminal and in the AWS interface for EC2 instances [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#Instances:instanceState=running)
 
 
 
-### Deploy mobilitydb_on_aws image using the kubectl
+### Deploy mobilitydb_on_aws image using kubectl
 
-We have prepared a manifest yaml file that define the environment of our workload mobilityDB. It contain the basics information and configuration in order to configure our Kubernetes cluster.
+We have prepared a manifest yaml file that define the environment of our workload MobilityDB on AWS. It contain the basics information and configuration in order to configure our Kubernetes cluster.
+
 The deployment instance used to specify the mobilitydb-on-aws docker image and mount volume path. Finnaly the number of replications to our deployment in order to increase the availability.
 
 configMap instance defined the environement information (postgres user, password, database name).
 
 The most important instances is the PersistentVolume and PersistentVolumeClaim. 
-
 The PersistentVolume parameter allows to define the class of storage, device and file system allow that store our mobilitydb data, it simply a workers nodes that store data. AWS provides different classes of storages, for more information see [this](https://docs.aws.amazon.com/eks/latest/userguide/storage.html). 
 
 The PersistentVolumeClaim parameter defines the type of request, access to use in order to interogate our PersistentVolume. A PersistentVolumeClaim has an access type policy – ReadWriteOnce, ReadOnlyMany, or ReadWriteMany. It simply a pod that manage the accesses to storage.
