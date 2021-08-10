@@ -297,13 +297,13 @@ Getting some shards of the AISInput table.
 
 Auto scaling AWS service 
 ------------
-As we have a complex MobilityDB queries, we may use the Vertical Autoscaler and the Horizontal Autoscaler that AWS provides to optimize the cost according to the query needs.
+As we have a complex MobilityDB queries, we may use the Vertical Autoscaler and the Horizontal Autoscaler provided by AWS services to optimize the cost according to the query needs.
 
 ### Vertical Pod scaling using the Autoscaler
 
 The vertical scaling that provide aws it's a mechanism allows us to adjust automatically the pods ressources. This adjustment decrease the cluster cost and can free up cpu and memory to other pods that may need it. The vertical autoscaler analyze the pods demand in order to see if the CPU and memory requirements are appropriate. If adjustments are needed, the vpa-updater relaunches the pods with updated values. 
 
-To deploy the vertical autoscaler, as following is the steps:
+To deploy the vertical autoscaler, follow these steps:
 ```bash
 git clone https://github.com/kubernetes/autoscaler.git
 cd autoscaler/vertical-pod-autoscaler/
@@ -351,23 +351,23 @@ There is a tutorial that show how to deploy the horizontal scaller using apache 
 [here](https://docs.aws.amazon.com/eks/latest/userguide/horizontal-pod-autoscaler.html)
 
 
-Deployment using Citus cluster using AWS EC2 instances
+Deployment using Citus cluster and AWS EC2 instances
 ------------
 
 
 
 ### Deploy mobilitydb-on-aws as standalone
-Before doing this step you need to connect within your aws EC2 machine known as master node. We assume that we have already create and configure one aws EC2 host master node and some aws EC2 host worker node.
+Before doing this step you need to connect within your AWS EC2 machine known as master node. We assume that we have already create and configure one AWS EC2 host master node and some AWS EC2 host worker node.
 - You can run the image as standalone using docker run command, Execute this on all cluster's nodes.
 ```bash
 sudo ssh -i YourKeyPairGenerated.pem ubuntu@EC2_Public_IP_Address
 
-docker run --name scaledb_standalone -p 5432:5432 -e POSTGRES_PASSWORD=postgres scalemobilitydb/scalemobilitydb 
+docker run --name mobilitydb-on-aws-standalone -p 5432:5432 -e POSTGRES_PASSWORD=postgres bouzouidja/mobilitydb-on-aws:latest 
 
 ``` 
 You can specify the mount volume option in order to fill the mobilityDB dataset from your host machine by adding -v /path/on/host_mobilitydb_data/:/path/inside/container_mobilitydb_data
 
-After running the scalemobilitydb instance, you can add and scale manually your database using the citus query.
+After running the mobilitydb-on-aws instance, you can add and scale manually your database using the citus query.
 
 ```sql
 select * from citus_add_node('new-node', port);
@@ -398,7 +398,7 @@ fill free to fill the table mobilitydb_table before or after the distribution. A
 
 
 ### Deploy mobilitydb-on-aws image using citus manager
-This deployment is similar to the last one except that there is a manager node. It simply listens for new containers tagged with the worker role, then adds them to the config file in a volume shared with the master node.
+This deployment is similar to the last one, except that we have a manager node. It simply listens for new containers tagged with the worker role, then adds them to the config file in a volume shared with the master node.
 In the same repository mobilitydb-on-aws run the command 
 
 
