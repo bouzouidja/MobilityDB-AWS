@@ -152,9 +152,6 @@ If you want to delete the cluster with all the ressources created just use:
 eksctl delete cluster --name mobilitydb-cluster
 ```` 
 
-
-Autoscaler add EC2 node to make the cluster growing according to the metrics
-
 2. View the cluster's ressources
 
 ```bash
