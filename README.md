@@ -43,11 +43,11 @@ docker pull bouzouidja/mobilitydb-on-aws:latest
 
 
 
-Deployment using EKS cluster
+Deployment using Elastic Kubernetes Service cluster
 ------------
 
 ### Install requirements
-Before running this step, we assume that you have created an aws kubernetes cluster using the eks command-line.
+Before running this step, we assume that you have created an AWS kubernetes cluster using the EKS command-line.
 
 1. Install kubectl
 ```bash
@@ -88,7 +88,7 @@ sudo ./aws/install
 aws --version
 # aws-cli/2.1.29 Python/3.7.4 Linux/4.14.133-113.105.amzn2.x86_64 botocore/2.0.0
 ```
-AWS requires that all incoming requests are cryptographically signed. These are the most important security information need to be set up in you host machine in order to manage you aws services remotely. 
+AWS requires that all incoming requests are cryptographically signed. These are the most important security information need to be set up in your host machine in order to manage you AWS services remotely. 
 
 [Access Key ID](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds)
 
@@ -126,10 +126,10 @@ At this stage we can manage our AWS services remotely from our machine through t
 
 ### Create an Amazon EKS cluster (control plane)
 
-1. Run the following eksctl in order to create a cluster using Elastic Kubernetes Service
+1. Run the following eksctl command in order to create a cluster using Elastic Kubernetes Service
 ```bash
 eksctl create cluster \
- --name mobilitydb-cluster \
+ --name mobilitydb-on-aws-cluster \
  --version 1.20 \
  --region eu-west-3 \
  --nodegroup-name linux-nodes \
@@ -139,10 +139,11 @@ eksctl create cluster \
 ```
 
 In the region option you can use the nearest region from your location.
-In the node-type option you can define the type of the ressource for the created node. AWS provide a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:).
+In the node-type option you can define the type of the ressource for the created node. AWS provides a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:).
 
- The ssh-access option useed to accept ssh connection if you want to access to you EC2 instances via ssh.
-You can customize your cluster creation using according to you needs, Run eksctl create cluster --help to see all the options.
+ The ssh-access option used to accept ssh connection if you want to access to your EC2 instances via ssh.
+
+You can customize your cluster creation according to your needs, run eksctl create cluster --help to see all the options.
 
 The creation process take about a 20 minutes of time.
 
