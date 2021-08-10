@@ -1,6 +1,6 @@
 # Scaling MobilityDB on AWS cloud services
 
-This repository provides a configuration files in order to deploy the MobilityDB on AWS cloud using EKS service and Citus cluster.
+This repository provides a configuration files in order to deploy the MobilityDB on AWS cloud service using Elastic Kubernetes service and Citus data.
 
 We prepared an image that combine the MobilityDB environement and citus environement built on top of it.
 In addition you can find in the doc folder a different way to scale the MobilityDB on AWS cloud and we described the architecture of Elastic Kubernetes Service. 
@@ -9,7 +9,7 @@ In addition you can find in the doc folder a different way to scale the Mobility
 [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB) is an open source software program that adds support for temporal and spatio-temporal objects to the [PostgreSQL](https://www.postgresql.org/) database and its spatial extension [PostGIS](http://postgis.net/).
 
 
-Citus is a PostgreSQL-based distributed RDBMS.Is an open source extension to PostgreSQL that transforms Postgres into a distributed database. To scale out Postgres horizontally, Citus employs distributed tables, reference tables, and a distributed SQL query engine. The query engine parallelizes SQL queries across multiple servers in a database cluster to deliver dramatically improved query response times, even for data-intensive applications. For more information, see the [Citus Data website](http://docs.citusdata.com/en/v10.1/).
+Citus is a PostgreSQL-based distributed RDBMS. Is an open source extension build on top of PostgreSQL, it transform a PostgreSQL database into a distributed environment in order to allow the horizontal scalability, Citus employs distributed tables, reference tables, and a distributed SQL query engine. The query engine parallelizes SQL queries across multiple servers in a database cluster to deliver results in reduced response times, even for data-intensive applications. For more information, see the [Citus Data website](http://docs.citusdata.com/en/v10.1/).
 
 
 
@@ -88,7 +88,7 @@ sudo ./aws/install
 aws --version
 # aws-cli/2.1.29 Python/3.7.4 Linux/4.14.133-113.105.amzn2.x86_64 botocore/2.0.0
 ```
-AWS requires that all incoming requests are cryptographically signed. This are the most important security innformation need to be set up in you host machine in order to manage you aws services remotely. 
+AWS requires that all incoming requests are cryptographically signed. These are the most important security information need to be set up in you host machine in order to manage you aws services remotely. 
 
 [Access Key ID](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds)
 
