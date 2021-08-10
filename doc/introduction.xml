@@ -162,7 +162,7 @@ eksctl version
 			<title> MobilityDB on EKS cluster linked with other AWS  services</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref='images/EKScluster.jpg' format="JPG" width='350pt' />
+						<imagedata align="center" fileref='images/EKScluster.jpg' format="JPG" width='250pt' />
 					</imageobject>
 				</mediaobject>
 		</figure>
