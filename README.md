@@ -176,10 +176,11 @@ The deployment instance used to specify the mobilitydb-on-aws docker image and m
 configMap instance defined the environement information (postgres user, password, database name).
 
 The most important instances is the PersistentVolume and PersistentVolumeClaim. 
-The PersistentVolume parameter allows to define the class of storage, device and file system allow that store our mobilitydb data, it simply a workers nodes that store data. AWS provides different classes of storages, for more information see [this](https://docs.aws.amazon.com/eks/latest/userguide/storage.html). 
+The PersistentVolume parameter allows to define the class of storage, device and file system that store our MobilityDB data, it simply a workers nodes that store data. AWS provides different classes of storages, for more information see [this](https://docs.aws.amazon.com/eks/latest/userguide/storage.html). 
 
-The PersistentVolumeClaim parameter defines the type of request, access to use in order to interogate our PersistentVolume. A PersistentVolumeClaim has an access type policy – ReadWriteOnce, ReadOnlyMany, or ReadWriteMany. It simply a pod that manage the accesses to storage.
+The PersistentVolumeClaim parameter defines the type of request, access to use in order to interogate our PersistentVolume. A PersistentVolumeClaim has an access type policy – ReadWriteOnce, ReadOnlyMany, or ReadWriteMany. It simply a pod that manage the accesses to our storage.
 When you create a EKS cluster, by default the PersistentVolume is set to gp2 (General Purpose SSD driver). It's an Amazon EBS (Elastic Block Store) class.
+
 Use this command to see the default storage class.
 ```bash
 kubectl get storageclass
@@ -190,7 +191,7 @@ If you want to create your own storage class and set it as default, follow [this
 
 Finnaly the service instance used to expose our MobilityDB workload. All thoses configuration can be updated according to your workload needs.
 
-Putting it all together in mobilitydb-workload.yaml file. Run this command to initialize all the instances. 
+Putting it all together in mobilitydb-on-aws-workload.yaml file. Run this command to initialize all the instances. 
 ```bash
 kubectl apply -f mobilitydb-on-aws-workload.yaml
 
@@ -232,7 +233,7 @@ kubectl get pod -owide
 ```
 In my case, mobilitydb-on-aws have pod name as mobilitydb-on-aws-7d745544dd-dkm7k and is running in the node 192.168.45.32.
 
-As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use this command to connect to postgres database, the password for postgres user is postgres. We can run our psql client within the pod mobilitydb-on-aws to confirm that citus and mobilitydb extension it's well created.
+As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use the following command to connect to our postgres database, the password for postgres user is postgres. We can run our psql client within the pod mobilitydb-on-aws to confirm that citus and mobilitydb extension it's well created.
 
 ```bash
 
@@ -260,11 +261,8 @@ kubectl exec -it  mobilitydb-on-aws-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U
 ### Run MobilityDB queries
 .....
 In order to make the MobilityDB queries more powerfull, we have used the single node citus that create shards for distributed table.
-There is a simple dataset from AIS data is prepared to simulate MobilityDB queries. You can find it in [my repository](https://github.com/bouzouidja/mobilitydb-on-aws/tree/master/data). You can mount more data in the /mnt/data of the host machine in the cloud to use the complex analytics queries.  
-Also i have prepared the MobilityDB environement in order to use the queries of the AIS workshop.
-The extension MobilityDB and citus is created, the table aisinput already created and filled with the mobility_dataset.csv. Finally the aisinput is sharded using citus distribute table as single node. 
-
-
+There is a simple dataset from AIS data,it is prepared to simulate MobilityDB queries. You can find it in [my repository](https://github.com/bouzouidja/mobilitydb-on-aws/tree/master/data). You can mount more data in the /mnt/data of the host machine in the cloud in order to test complex analytics queries.  
+Also we have prepared the MobilityDB environement in order to use the queries of the AIS workshop. The extension MobilityDB and citus is created, the table aisinput already created and filled with the mobility_dataset.csv. Finally the aisinput is sharded using citus distribute table as single node. 
 
 
 Select some aisinput.
