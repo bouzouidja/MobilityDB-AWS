@@ -1,12 +1,10 @@
 # This file is auto generated from it's template,
 # see citusdata/tools/packaging_automation/templates/docker/latest/latest.tmpl.dockerfile.
-FROM postgres:13.3
-ARG VERSION=10.1.0
+FROM postgres:13.4
+ARG VERSION=10.1.2
 LABEL maintainer="Scale MobilityDB project https://" \
-      org.label-schema.name="MobilityDB on AWS" \
-      org.label-schema.description="Deploying MobilityDB on AWS services" \
-      org.label-schema.url="https://www.citusdata.com" \
-      org.label-schema.vcs-url="https://github.com/bouzouidja/mobilitydb_aws.git" \
+      org.label-schema.name="MobilityDB in AWS" \
+      org.label-schema.description="Deploying MobilityDB in AWS services" \
       org.label-schema.version=${VERSION} \
       org.label-schema.schema-version="1.0"
 

@@ -4,7 +4,7 @@
 
 <!ENTITY last_release_version "1.0">
 
-<!ENTITY introduction SYSTEM "introduction.xml">
+<!ENTITY manual SYSTEM "manual.xml">
 
 
 ]>
@@ -27,7 +27,7 @@
 		</abstract>
 	</bookinfo>
 
-	&introduction;
+	&manual;
 	
 
 </book>
