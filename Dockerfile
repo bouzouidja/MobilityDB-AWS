@@ -6,7 +6,7 @@ LABEL maintainer="Scale MobilityDB project https://" \
       org.label-schema.name="MobilityDB on AWS" \
       org.label-schema.description="Deploying MobilityDB on AWS services" \
       org.label-schema.url="https://www.citusdata.com" \
-      org.label-schema.vcs-url="https://github.com/bouzouidja/scalable_mobilitydb" \
+      org.label-schema.vcs-url="https://github.com/bouzouidja/mobilitydb_aws.git" \
       org.label-schema.version=${VERSION} \
       org.label-schema.schema-version="1.0"
 
@@ -73,7 +73,7 @@ RUN cd /usr/local/src/ \
 	make install
 
 # Add an AIS dataset to test our MobilityDb queries
-ADD https://github.com/bouzouidja/mobilitydb_on_aws/tree/master/data/mobility_dataset.csv  /usr/local/src/ais_dataset
+ADD https://github.com/bouzouidja/mobilitydb_aws/tree/master/data/mobility_dataset.csv  /usr/local/src/ais_dataset
 
 
 # add citus to default PostgreSQL config
@@ -81,7 +81,7 @@ RUN echo "shared_preload_libraries='citus'" >> /usr/share/postgresql/postgresql.
 
 
 # add scripts to run after initdb
-COPY ./initdb-mobilitydb-on-aws.sh /docker-entrypoint-initdb.d/mobilitydb.sh
+COPY ./initdb-mobilitydb-aws.sh /docker-entrypoint-initdb.d/mobilitydb.sh
 RUN chmod +x /docker-entrypoint-initdb.d/mobilitydb.sh
 
 

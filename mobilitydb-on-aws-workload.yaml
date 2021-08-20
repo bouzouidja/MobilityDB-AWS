@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mobilitydb-on-aws
+  name: mobilitydb-aws
 spec:
   selector:
    matchLabels:
-    app: mobilitydb-on-aws
+    app: mobilitydb-aws
   replicas: 1
   template:
     metadata:
       labels:
-        app: mobilitydb-on-aws
+        app: mobilitydb-aws
     spec:
       containers:
-        - name: mobilitydb-on-aws
-          image: bouzouidja/mobilitydb-on-aws:latest
+        - name: mobilitydb-aws
+          image: bouzouidja/mobilitydb-aws:latest
           imagePullPolicy: "IfNotPresent"
           envFrom:
             - configMapRef:
@@ -33,7 +33,7 @@ spec:
       name: postgres-pv-volume
       labels:
         type: local
-        app: mobilitydb-on-aws
+        app: mobilitydb-aws
     spec:
       storageClassName: manual
       capacity:
@@ -48,7 +48,7 @@ spec:
     metadata:
       name: postgres-pv-claim
       labels:
-        app: mobilitydb-on-aws
+        app: mobilitydb-aws
     spec:
       storageClassName: manual
       accessModes:
@@ -62,7 +62,7 @@ spec:
     metadata:
       name: postgres-config
       labels:
-        app: mobilitydb-on-aws
+        app: mobilitydb-aws
     data:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -70,14 +70,14 @@ spec:
     apiVersion: v1
     kind: Service
     metadata:
-      name: mobilitydb-on-aws
+      name: mobilitydb-aws
       labels:
-        app: mobilitydb-on-aws
+        app: mobilitydb-aws
     spec:
        ports:
-        - name: mobilitydb-on-aws
+        - name: mobilitydb-aws
           port: 5432
           nodePort: 30200
        type: NodePort
        selector:
-        app: mobilitydb-on-aws
+        app: mobilitydb-aws
