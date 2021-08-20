@@ -1,9 +1,9 @@
-# Scaling MobilityDB on AWS cloud services
+# Scaling MobilityDB in AWS cloud services
 
-This repository provides a configuration files in order to deploy the MobilityDB on AWS cloud service using Elastic Kubernetes service and Citus data.
+This repository provides a configuration files in order to deploy the MobilityDB in AWS cloud service using Elastic Kubernetes service and Citus data.
 
 We prepared an image that combine the MobilityDB environement and citus environement built on top of it.
-In addition you can find in the doc folder a different way to scale the MobilityDB on AWS cloud and we described the architecture of Elastic Kubernetes Service. 
+In addition you can find in the doc folder a different way to scale the MobilityDB in AWS cloud and we described the architecture of Elastic Kubernetes Service. 
 
 
 [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB) is an open source software program that adds support for temporal and spatio-temporal objects to the [PostgreSQL](https://www.postgresql.org/) database and its spatial extension [PostGIS](http://postgis.net/).
@@ -26,7 +26,7 @@ Requirements
 Both approachs need to build the mobilitydb-aws image.
 
 ### Build Citus on top of MobilityDB 
-This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using kubectl command from your host machine if you follow the deployment on AWS EKS cluster.  
+This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using kubectl command from your host machine if you follow the deployment in AWS EKS cluster.  
 ```bash
 git clone https://github.com/bouzouidja/mobilitydb-aws.git
 cd mobilitydb-aws
@@ -169,7 +169,7 @@ You should see three nodes created in the terminal and in the AWS interface for 
 
 ### Deploy mobilitydb_aws image using kubectl
 
-We have prepared a manifest yaml file that define the environment of our workload MobilityDB on AWS. It contain the basics information and configuration in order to configure our Kubernetes cluster.
+We have prepared a manifest yaml file that define the environment of our workload MobilityDB in AWS. It contain the basics information and configuration in order to configure our Kubernetes cluster.
 
 The deployment instance used to specify the mobilitydb-aws docker image and mount volume path. Finnaly the number of replications to our deployment in order to increase the availability.
 
