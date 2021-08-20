@@ -61,7 +61,7 @@ curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/d
 # Move the extracted binary to /usr/local/bin. 
 sudo mv /tmp/eksctl /usr/local/bin
 # Test that your installation was successful with the following command.
-eksctl version
+<varname>eksctl</varname> version
 			</programlisting>
 			</para>
 			<para>
@@ -94,7 +94,7 @@ aws --version
 				<listitem><para>To view the new access key pair, choose Show. You will not have access to the secret access key again after this dialog box closes. Save the access key id and the secret access key somewhere.</para></listitem>
 				</itemizedlist>
 			</para>
-			<para>Now run aws configure command and copy past them in their corresponding parameter</para>
+			<para>Now run <varname>aws configure</varname> command and copy past them in their corresponding parameter</para>
 			<programlisting xml:space="preserve">
 aws configure
 # AWS Access Key ID [****************FZQ2]: 
@@ -102,7 +102,7 @@ aws configure
 # Default region name [eu-west-3]: 
 # Default output format [None]: 
 			</programlisting>
-			<para>You can use the default region as the nearest one from you. In my case i used the eu-west-3 region (Paris). At this stage we can manage our AWS services remotely from our machine through the credentials stored on the file located in:</para>
+			<para>You can use the default region as the nearest one from you. In my case i used the <varname>eu-west-3 region</varname> (Paris). At this stage we can manage our AWS services remotely from our machine through the credentials stored on the file located in:</para>
 			<programlisting xml:space="preserve">
 ~/.aws/credentials
 			</programlisting>
@@ -113,14 +113,14 @@ aws configure
 		<para>As you can see in the following figure we have prepared a docker image that contains the MobilityDB environment and Citus environment built on top of it.</para>
 		<figure id="vertical_container_mobilitydb_aws" >
 						<title>Vertical container mobilitydb-aws </title>	
-						<mediaobject>
+						<inlinemediaobject>
 							<imageobject>
 								<imagedata align="center" fileref='images/VerticalContainer.jpg' format="JPG" width='250pt' />
 							</imageobject>
-						</mediaobject>
+						</inlinemediaobject>
 		</figure>
 	
-		<para>This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using kubectl command from your host machine if you follow the deployment in AWS EKS cluster.</para>  
+		<para>This image deploy Citus on top of MobilityDB. The <varname>Dockerfile</varname> contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using <varname>kubectl</varname> command from your host machine if you follow the deployment in AWS EKS cluster.</para>  
 		<programlisting xml:space="preserve">
 git clone https://github.com/bouzouidja/mobilitydb-aws.git
 cd mobilitydb-aws
@@ -135,7 +135,7 @@ docker pull bouzouidja/mobilitydb-aws:latest
 
 	<sect1 id="kubernetes_cluster_view">
 		<title>Kubernetes Cluster view</title>
-		<para>After preparing our MobilityDB scale, we can easily deploy it on worker node in Kubernetes cluster using the kubectl command. In the following figure we will show you the installation manual of requirements and deployment. Finally we have made a diagram to show you a small Kubernetes cluster that make MobilityDB scaling. We have a control Plane or the Master node and two workers nodes. The worker in the right it can be seen as storage node, the DS stand for dense storage. The worker in the left it can be seen as compute node, the DC stand for dense compute. As you can see a pod is created within the worker node using the mobilitydb-aws container prepared.</para> 
+		<para>After preparing our MobilityDB scale, we can easily deploy it on worker node in Kubernetes cluster using the <varname>kubectl</varname> command. In the following figure we will show you the manual to install requirements and deployment. Finally we have made a diagram to show you a small Kubernetes cluster that make MobilityDB scaling. We have a control Plane or the Master node and two workers nodes. The worker in the right it can be seen as storage node, the DS stand for dense storage. The worker in the left it can be seen as compute node, the DC stand for dense compute. As you can see a pod is created within the worker node using the <varname>mobilitydb-aws</varname> container prepared.</para> 
 		<para> Once you have configured this Kubernetes architecture, you can deploy it on any Cloud service platform that provides Kubernetes. Maybe you are asking a question why there is a storage node?. In my opinion the data need to be loaded within a cluster before using the MobilityDB queries. Else another AWS services may be explored as EMR for Elastic MapReduce and AWS Apache Spark or AWS S3 for Simple Storage Service to make web-scale computing easier.</para>
 		<figure id="kubernetes_cluster">
 			<title>MobilityDB Kubernetes cluster</title>
@@ -149,8 +149,8 @@ docker pull bouzouidja/mobilitydb-aws:latest
 
 	<sect1 id="EKS_control_plane_view">
 		<title>EKS control plane view</title>
-		<para>In following we will show you how to create an EKS cluster, how to deploy the our image mobilitydb_aws from your host using the eksctl and deploy the autoscalling. In the next figure we described the components of Kubernetes cluster created in AWS Cloud using EKS service.</para>
-		<para>There is a basic parameters needs to pass on eksctl command to create your cluster as which region wants to deploy, how many replication in availability zone, the number of node and type of node. Once the EKS cluster is created, all the configurations between nodes and control plane as connectivity, default volume used, EC2 instance creation is automatically set up in the background.</para> 
+		<para>In following we will show you how to create an EKS cluster, how to deploy the our image <varname>mobilitydb_aws</varname> from your host using the <varname>eksctl</varname> and deploy the autoscalling. In the next figure we described the components of Kubernetes cluster created in AWS Cloud using EKS service.</para>
+		<para>There is a basic parameters needs to pass on <varname>eksctl</varname> command to create your cluster as which region wants to deploy, how many replication in availability zone, the number of node and type of node. Once the EKS cluster is created, all the configurations between nodes and control plane as connectivity, default volume used, EC2 instance creation is automatically set up in the background.</para> 
 		<para>In addition the link to other AWS components is set without any hand configuration like the IAM service for Identity and Access management and Cloud Formation service  used to manage the life cycle of AWS resources. We can configure other AWS services with the EKS like Load Balancer used to distribute incoming traffic across multiple targets, such EC2 instances, containers, IP addresses.</para>
 		<figure id="EKS_Cluster">
 			<title> MobilityDB on EKS cluster linked with other AWS  services</title>
@@ -162,7 +162,7 @@ docker pull bouzouidja/mobilitydb-aws:latest
 		</figure>
 		<sect2 id="Create_Amazon_EKS_cluster">
 			<title>Create an Amazon EKS cluster (control plane)</title>
-			<para>Run the following eksctl in order to create a cluster using Elastic Kubernetes Service
+			<para>Run the following <varname>eksctl</varname> in order to create a cluster using Elastic Kubernetes Service
 				<programlisting xml:space="preserve">
 eksctl create cluster \
 --name mobilitydb-aws-cluster \
@@ -175,8 +175,8 @@ eksctl create cluster \
 				</programlisting>
 			</para>
 			<para>In the region option you can use the nearest region from your location.</para>
-			<para>In the node-type option you can define the type of the resource for the created node. AWS provides a lot of resource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type. <ulink url="https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:">here</ulink>.</para> 
-			<para>The ssh-access option used to accept ssh connection if you want to access to your EC2 instances via ssh. You can customize your cluster creation using according to your needs, Run eksctl create cluster --help to see all the options.</para>
+			<para>In the <varname>node-type</varname> option you can define the type of the resource for the created node. AWS provides a lot of resource type. In my case i defined a <varname>m5.large</varname> type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type. <ulink url="https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:">here</ulink>.</para> 
+			<para>The <varname>ssh-access</varname> option used to accept ssh connection if you want to access to your EC2 instances via ssh. You can customize your cluster creation using according to your needs, Run <varname>eksctl create cluster --help</varname> to see all the options.</para>
 
 			<para>The creation process takes about a 20 minutes of time.</para>
 			<para>If you want to delete the cluster with all the ressources created just use:</para>
@@ -197,13 +197,13 @@ kubectl get nodes
 
 		<sect2 id="Deploy_scaleMobilityDB_kubectl">
 			<title>Deploy mobilitydb_aws image using kubectl</title>
-			<para>We have prepared a manifest yaml file that defines the environment of our workload MobilityDB. It contains the basics information and configuration in order to configure our Kubernetes cluster. The deployment instance used to specify the mobilitydb-aws docker image and mount volume path. Finally the number of replications to our deployment in order to increase the availability.
-				configMap instance defined the environement information (postgres user, password, database name).</para>
-			<para>The most important instances is the PersistentVolume and PersistentVolumeClaim.
-			The PersistentVolume parameter allows to define the class of storage, device and file system to store our MobilityDB data, it simply a workers nodes that store data. AWS provides different classes of storages, for more information see <ulink url="https://docs.aws.amazon.com/eks/latest/userguide/storage.html">this guide</ulink>.
+			<para>We have prepared a <varname>manifest</varname> yaml file that defines the environment of our workload MobilityDB. It contains the basics information and configuration in order to configure our Kubernetes cluster. The deployment instance used to specify the <varname>mobilitydb-aws</varname> docker image and mount volume path. Finally the number of replications to our deployment in order to increase the availability.
+				<varname>configMap</varname> instance defined the environement information (postgres user, password, database name).</para>
+			<para>The most important instances is the <varname>PersistentVolume</varname> and <varname>PersistentVolumeClaim</varname>.
+			The <varname>PersistentVolume</varname> parameter allows to define the class of storage, device and file system to store our MobilityDB data, it simply a workers nodes that store data. AWS provides different classes of storages, for more information see <ulink url="https://docs.aws.amazon.com/eks/latest/userguide/storage.html">this guide</ulink>.
 
-			The PersistentVolumeClaim parameter defines the type of request, access to use in order to interogate our PersistentVolume. A PersistentVolumeClaim has an access type policy – ReadWriteOnce, ReadOnlyMany, or ReadWriteMany. It simply a pod that manage the accesses to storage.</para>
-			<para>When you create a EKS cluster, by default the PersistentVolume is set to gp2 (General Purpose SSD driver). It is derived from the Amazon EBS (Elastic Block Store) class.
+			The <varname>PersistentVolumeClaim</varname> parameter defines the type of request, access to use in order to interogate our <varname>PersistentVolume</varname>. A <varname>PersistentVolumeClaim</varname> has an access type policy – <varname>ReadWriteOnce</varname>, <varname>ReadOnlyMany</varname>, or <varname>ReadWriteMany</varname>. It simply a pod that manage the accesses to storage.</para>
+			<para>When you create a EKS cluster, by default the <varname>PersistentVolume</varname> is set to <varname>gp2</varname> (General Purpose SSD driver). It is derived from the Amazon EBS (Elastic Block Store) class.
 			Use this command to see the default storage class.
 				<programlisting xml:space="preserve">kubectl get storageclass
 # NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
@@ -211,7 +211,7 @@ kubectl get nodes
 				</programlisting></para>
 			<para>If you want to create your own storage class and set it as default, follow <ulink url="https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html">this guide</ulink>
 		Finnaly the service instance used to expose our MobilityDB workload. All thoses configuration can be updated according to your workload needs.</para>
-			<para>Putting it all together in mobilitydb-aws-workload.yaml file. Run this command to initialize all the instances. 
+			<para>Putting it all together in <varname>mobilitydb-aws-workload.yaml</varname> file. Run this command to initialize all the instances. 
 				<programlisting xml:space="preserve">
 kubectl apply -f mobilitydb-aws-workload.yaml
 
@@ -237,16 +237,16 @@ kubectl apply -f mobilitydb-aws-workload.yaml
 # NAME                                          DESIRED   CURRENT   READY   AGE
 # replicaset.apps/mobilitydb-aws-7d745544dd   1         1         1       69m
 				</programlisting></para>
-			<para>At this stage you can run your psql client to confirm that the mobilitydb-aws is deployed successfully. To run the psql, we need to know on which node the MobilityDB pod is running. the following command show detail information including the ip address that host the mobilitydb-aws.  
+			<para>At this stage you can run your <varname>psql</varname> client to confirm that the <varname>mobilitydb-aws</varname> is deployed successfully. To run the <varname>psql</varname>, we need to know on which node the MobilityDB pod is running. the following command show detail information including the ip address that host the <varname>mobilitydb-aws</varname>.  
 				<programlisting xml:space="preserve">		
 kubectl get pod -owide
 
 # NAME                                READY   STATUS    RESTARTS   AGE     IP               NODE                                          NOMINATED NODE   READINESS GATES
 # mobilitydb-aws-7d745544dd-dkm7k   1/1     Running   0          100s   192.168.45.32   ip-192-168-60-10.eu-west-3.compute.internal   none           none
 				</programlisting>
-			In my case, mobilitydb-aws have pod name as mobilitydb-aws-7d745544dd-dkm7k and is running in the node 192.168.45.32.
+			In my case, <varname>mobilitydb-aws</varname> have pod name as mobilitydb-aws-7d745544dd-dkm7k and is running in the node 192.168.45.32.
 
-			As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use this command to connect to postgres database, the password for postgres user is postgres. We can run our psql client within the pod mobilitydb-aws to confirm that citus and mobilitydb extension it's well created.</para>
+			As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use this command to connect to postgres database, the password for <varname>postgres</varname> user is <varname>postgres</varname>. We can run our psql client within the <varname>pod</varname> mobilitydb-aws to confirm that citus and mobilitydb extension it's well created.</para>
 			<para>
 				<programlisting xml:space="preserve">
 kubectl exec -it  mobilitydb-aws-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U postgres -p 5432 postgres
@@ -274,7 +274,7 @@ kubectl exec -it  mobilitydb-aws-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U po
 		<sect2 id="Run_MobilityDB_queries">
 			<title>Run MobilityDB queries</title>
 			<para>In order to make the MobilityDB queries more powerful, we have used the single node citus that create shards for distributed table.
-			We have prepared a simple dataset from AIS data i order to simulate MobilityDB queries. You can find it in <ulink url="https://github.com/bouzouidja/mobilitydb_aws/tree/master/data"> my repository</ulink> . You can mount more data in the /mnt/data on the host machine in the Cloud to use the complex analytics queries.  
+			We have prepared a simple dataset from AIS data i order to simulate MobilityDB queries. You can find it in <ulink url="https://github.com/bouzouidja/mobilitydb_aws/tree/master/data"> my repository</ulink> . You can mount more data in the <varname>/mnt/data</varname> on the host machine in the Cloud to use the complex analytics queries.  
 			Also, I have prepared the MobilityDB environment in order to use the queries of the AIS workshop.
 			The extension MobilityDB and citus are created, the table AisInput already created and filled with the mobility_dataset.csv. Finally the AisInput is sharded using citus distribute table as single node.</para> 
 			<para>Let select some AisInput records.
@@ -310,7 +310,7 @@ kubectl exec -it  mobilitydb-aws-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U po
 			<para>
 				<emphasis role="bold">Vertical Pod scaling using the Autoscaler</emphasis>
 			</para>
-			<para>The vertical scaling provided by AWS it's a mechanism allows us to adjust automatically the pods resources. This adjustment decreases the cluster cost and can free up cpu and memory to other pods that may need it. The vertical autoscaler analyze the pods demand in order to see if the CPU and memory requirements are appropriate. If adjustments are needed, the vpa-updater relaunched the pods with updated values. 
+			<para>The vertical scaling provided by AWS it's a mechanism allows us to adjust automatically the pods resources. This adjustment decreases the cluster cost and can free up CPU and memory to other pods that may need it. The vertical autoscaler analyze the pods demand in order to see if the CPU and memory requirements are appropriate. If adjustments are needed, the <varname>vpa-updater</varname> relaunched the pods with updated values. 
 
 				To deploy the vertical autoscaler, in following is the steps:
 				<programlisting xml:space="preserve">
@@ -355,9 +355,9 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 	<sect1 id="EKS_cluster_replication_view">
 		<title>EKS cluster replication view</title>
 		<para>
-			In this figure we have our MobilityDB environment replicated in all available zones in the Europe (Paris) eu-West-3 region. We can also deploy our application in other regions as Europe (Frankfurt) eu-central-1 or Europe (Milan) eu-south-1</para>
+			In this figure we have our MobilityDB environment replicated in all available zones in the Europe (Paris) <varname>eu-West-3 region</varname>. We can also deploy our application in other regions as Europe (Frankfurt) <varname>eu-central-1</varname> or Europe (Milan) <varname>eu-south-1</varname></para>
 		<figure id="Replication_On_EKS">
-				<title>EKS Cluster Replication on eu-west-3 availables zones </title>
+				<title>EKS Cluster Replication on <varname>eu-west-3</varname> availables zones </title>
 				<mediaobject>
 					<imageobject>
 						<imagedata align="center" fileref='images/ReplicationEKS.jpg' format="JPG" width='350pt'/>
@@ -369,7 +369,7 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 
 <chapter id="scalling_using_citus_cluster">
 	<title>Deployment MobilityDB using Citus Cluster</title>
-	<para>In this part we defined a simple cluster of machine (EC2 instances) created by hand in AWS Cloud as on premise version. So we have deployed the mobilitydb-aws on all nodes and we choose one from them as Master and then make the others as worker by joining them to the Master by the sql command citus\_add\_node('IP/host of new worker', 5432);</para>
+	<para>In this part we defined a simple cluster of machine (EC2 instances) created by hand in AWS Cloud as on premise version. So we have deployed the <varname>mobilitydb-aws</varname> on all nodes and we choose one from them as Master and then make the others as worker by joining them to the Master by the sql command <varname>citus\_add\_node('IP/host of new worker', 5432);</varname></para>
 	<sect1 id="Deploy_MobilityDB_as_standalone">
 		<title>Deploy MobilityDB in AWS as standalone</title>
 		<para>Before doing this step you need to connect within your AWS EC2 machine known as the master node. We assume that we have already created and configure one AWS EC2 host master node and some AWS EC2 host worker node.
@@ -379,7 +379,7 @@ sudo ssh -i YourKeyPairGenerated.pem ubuntu@EC2_Public_IP_Address
 
 docker run --name scaledb_standalone -p 5432:5432 -e POSTGRES_PASSWORD=postgres bouzouidja/mobilitydb-aws:latest 
 		</programlisting></para>
-		<para>You can specify the mount volume option in order to fill the mobilityDB dataset from your host machine by adding -v /path/on/host_mobilitydb_data/:/path/inside/container_mobilitydb_data
+		<para>You can specify the mount volume option in order to fill the mobilityDB dataset from your host machine by adding <varname>-v /path/on/host_mobilitydb_data/:/path/inside/container_mobilitydb_data</varname>
 
 	After running the mobilitydb-aws instance, you can add and scale manually your database using the citus query.
 		<programlisting xml:space="preserve">			
