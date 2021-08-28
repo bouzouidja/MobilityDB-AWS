@@ -122,8 +122,8 @@ aws configure
 	
 		<para>This image deploy Citus on top of MobilityDB. The <varname>Dockerfile</varname> contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using <varname>kubectl</varname> command from your host machine if you follow the deployment in AWS EKS cluster.</para>  
 		<programlisting xml:space="preserve">
-git clone https://github.com/bouzouidja/mobilitydb-aws.git
-cd mobilitydb-aws
+git clone https://github.com/bouzouidja/MobilityDB-AWS.git
+cd MobilityDB-AWS
 docker build -t bouzouidja/mobilitydb-aws .
 		</programlisting>
 		<para>Or you can pull the image from directely from the docker hub</para>
