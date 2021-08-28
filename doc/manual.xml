@@ -111,7 +111,7 @@ aws configure
 	<sect1 id="EKS_vertical_container_view">
 		<title>EKS vertical container view</title>
 		<para>As you can see in the following figure we have prepared a docker image that contains the MobilityDB environment and Citus environment built on top of it.</para>
-		<figure id="vertical_container_mobilitydb_aws" >
+		<figure id="vertical_container_MobilityDB-AWS" >
 						<title>Vertical container mobilitydb-aws </title>	
 						<inlinemediaobject>
 							<imageobject>
@@ -149,7 +149,7 @@ docker pull bouzouidja/mobilitydb-aws:latest
 
 	<sect1 id="EKS_control_plane_view">
 		<title>EKS control plane view</title>
-		<para>In following we will show you how to create an EKS cluster, how to deploy the our image <varname>mobilitydb_aws</varname> from your host using the <varname>eksctl</varname> and deploy the autoscalling. In the next figure we described the components of Kubernetes cluster created in AWS Cloud using EKS service.</para>
+		<para>In following we will show you how to create an EKS cluster, how to deploy the our image <varname>MobilityDB-AWS</varname> from your host using the <varname>eksctl</varname> and deploy the autoscalling. In the next figure we described the components of Kubernetes cluster created in AWS Cloud using EKS service.</para>
 		<para>There is a basic parameters needs to pass on <varname>eksctl</varname> command to create your cluster as which region wants to deploy, how many replication in availability zone, the number of node and type of node. Once the EKS cluster is created, all the configurations between nodes and control plane as connectivity, default volume used, EC2 instance creation is automatically set up in the background.</para> 
 		<para>In addition the link to other AWS components is set without any hand configuration like the IAM service for Identity and Access management and Cloud Formation service  used to manage the life cycle of AWS resources. We can configure other AWS services with the EKS like Load Balancer used to distribute incoming traffic across multiple targets, such EC2 instances, containers, IP addresses.</para>
 		<figure id="EKS_Cluster">
@@ -196,7 +196,7 @@ kubectl get nodes
 		</sect2>
 
 		<sect2 id="Deploy_scaleMobilityDB_kubectl">
-			<title>Deploy mobilitydb_aws image using kubectl</title>
+			<title>Deploy MobilityDB-AWS image using kubectl</title>
 			<para>We have prepared a <varname>manifest</varname> yaml file that defines the environment of our workload MobilityDB. It contains the basics information and configuration in order to configure our Kubernetes cluster. The deployment instance used to specify the <varname>mobilitydb-aws</varname> docker image and mount volume path. Finally the number of replications to our deployment in order to increase the availability.
 				<varname>configMap</varname> instance defined the environement information (postgres user, password, database name).</para>
 			<para>The most important instances is the <varname>PersistentVolume</varname> and <varname>PersistentVolumeClaim</varname>.
@@ -274,7 +274,7 @@ kubectl exec -it  mobilitydb-aws-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U po
 		<sect2 id="Run_MobilityDB_queries">
 			<title>Run MobilityDB queries</title>
 			<para>In order to make the MobilityDB queries more powerful, we have used the single node citus that create shards for distributed table.
-			We have prepared a simple dataset from AIS data i order to simulate MobilityDB queries. You can find it in <ulink url="https://github.com/bouzouidja/mobilitydb_aws/tree/master/data"> my repository</ulink> . You can mount more data in the <varname>/mnt/data</varname> on the host machine in the Cloud to use the complex analytics queries.  
+			We have prepared a simple dataset from AIS data i order to simulate MobilityDB queries. You can find it in <ulink url="https://github.com/bouzouidja/MobilityDB-AWS/tree/master/data"> my repository</ulink> . You can mount more data in the <varname>/mnt/data</varname> on the host machine in the Cloud to use the complex analytics queries.  
 			Also, I have prepared the MobilityDB environment in order to use the queries of the AIS workshop.
 			The extension MobilityDB and citus are created, the table AisInput already created and filled with the mobility_dataset.csv. Finally the AisInput is sharded using citus distribute table as single node.</para> 
 			<para>Let select some AisInput records.
@@ -411,7 +411,7 @@ SELECT create_distributed_table('mobilitydb_table', 'column_dist');
 	<sect1 id="Deploy_MobilityDB_using_citus_manager">
 		<title>Deploy MobilityDB as Citus manager</title>
 		<para>This deployment is similar to the last one except that we have a manager node that listen to new containers tagged with the worker role, then adds them to the config file in a volume shared with the master node.
-		In the same repository <varname>mobilitydb_aws</varname> run the following command. 
+		In the same repository <varname>MobilityDB-AWS</varname> run the following command. 
 
 			<programlisting xml:space="preserve">
 docker-compose -p mobilitydb-aws up

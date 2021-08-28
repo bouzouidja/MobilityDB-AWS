@@ -71,7 +71,7 @@ RUN cd /usr/local/src/ \
 	make install
 
 # Add an AIS dataset to test our MobilityDb queries
-ADD https://github.com/bouzouidja/mobilitydb_aws/tree/master/data/mobility_dataset.csv  /usr/local/src/ais_dataset
+ADD https://github.com/bouzouidja/MobilityDB-AWS/tree/master/data/mobility_dataset.csv  /usr/local/src/ais_dataset
 
 
 # add citus to default PostgreSQL config

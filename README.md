@@ -28,8 +28,8 @@ Both approachs need to build the mobilitydb-aws image.
 ### Build Citus on top of MobilityDB 
 This image deploy Citus on top of MobilityDB. The Dockerfile contain both Citus and MobilityDB gist that work adequately. This gist need to be executed in all your cluster nodes if you follow the deployment using Citus cluster. Run it in the EKS cluster using kubectl command from your host machine if you follow the deployment in AWS EKS cluster.  
 ```bash
-git clone https://github.com/bouzouidja/mobilitydb-aws.git
-cd mobilitydb-aws
+git clone https://github.com/bouzouidja/MobilityDB-AWS.git
+cd MobilityDB-AWS
 docker build -t bouzouidja/mobilitydb-aws .
 ```
 
@@ -261,7 +261,7 @@ kubectl exec -it  mobilitydb-aws-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U po
 ### Run MobilityDB queries
 .....
 In order to make the MobilityDB queries more powerfull, we have used the single node citus that create shards for distributed table.
-There is a simple dataset from AIS data,it is prepared to simulate MobilityDB queries. You can find it in [my repository](https://github.com/bouzouidja/mobilitydb-aws/tree/master/data). You can mount more data in the /mnt/data of the host machine in the cloud in order to test complex analytics queries.  
+There is a simple dataset from AIS data,it is prepared to simulate MobilityDB queries. You can find it in [my repository](https://github.com/bouzouidja/MobilityDB-AWS/tree/master/data). You can mount more data in the /mnt/data of the host machine in the cloud in order to test complex analytics queries.  
 Also we have prepared the MobilityDB environement in order to use the queries of the AIS workshop. The extension MobilityDB and citus is created, the table aisinput already created and filled with the mobility_dataset.csv. Finally the aisinput is sharded using citus distribute table as single node. 
 
 
