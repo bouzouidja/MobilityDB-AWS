@@ -1,15 +1,15 @@
-# Scaling MobilityDB in AWS cloud services
+# Scaling MobilityDB in AWS Cloud services
 
-This repository provides a configuration files in order to deploy the MobilityDB in AWS cloud service using Elastic Kubernetes service and Citus data.
+This repository provides configuration files in order to deploy MobilityDB in AWS Cloud service using Elastic Kubernetes service and Citus data.
 
-We prepared an image that combine the MobilityDB environement and citus environement built on top of it.
-In addition you can find in the doc folder a different way to scale the MobilityDB in AWS cloud and we described the architecture of Elastic Kubernetes Service. 
+We prepared an image that combine MobilityDB environement and citus environement built on top of it.
+In addition you can find in the doc folder a different way to scale MobilityDB in AWS Cloud and we described the architecture of Elastic Kubernetes Service. 
 
 
 [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB) is an open source software program that adds support for temporal and spatio-temporal objects to the [PostgreSQL](https://www.postgresql.org/) database and its spatial extension [PostGIS](http://postgis.net/).
 
 
-Citus is a PostgreSQL-based distributed RDBMS. Is an open source extension build on top of PostgreSQL, it transform a PostgreSQL database into a distributed environment in order to allow the horizontal scalability, Citus employs distributed tables, reference tables, and a distributed SQL query engine. The query engine parallelizes SQL queries across multiple servers in a database cluster to deliver results in reduced response times, even for data-intensive applications. For more information, see the [Citus Data website](http://docs.citusdata.com/en/v10.1/).
+Citus is a PostgreSQL-based distributed RDBMS. Is an open source extension build on top of PostgreSQL, it transform a PostgreSQL database into a distributed environment in order to allow the horizontal scalability, Citus employs distributed tables, reference tables, and a distributed SQL query engine. The query engine parallelizes SQL queries across multiple servers in a database cluster to deliver results with reduced response times, even for data-intensive applications. For more information, see the [Citus Data website](http://docs.citusdata.com/en/v10.1/).
 
 
 
@@ -79,7 +79,7 @@ sudo mv /tmp/eksctl /usr/local/bin
 eksctl version
 ```
 
-3. Install and configure the aws CLI (Command Line Interface) environment
+3. Install and configure the AWS CLI (Command Line Interface) environment
 
 ```bash
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -88,7 +88,7 @@ sudo ./aws/install
 aws --version
 # aws-cli/2.1.29 Python/3.7.4 Linux/4.14.133-113.105.amzn2.x86_64 botocore/2.0.0
 ```
-AWS requires that all incoming requests are cryptographically signed. These are the most important security information need to be set up in your host machine in order to manage you AWS services remotely. 
+AWS requires that all incoming requests are cryptographically signed. These are the most important security information need to be set up in your host machine in order to manage your AWS services remotely. 
 
 [Access Key ID](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds)
 
@@ -109,7 +109,7 @@ Navigate to https://console.aws.amazon.com/iam/home#/home
 - In the Access keys section, choose Create access key.
 
 - To view the new access key pair, choose Show. You will not have access to the secret access key again after this dialog box closes. Save the access key id and the secret access key somewhere.
-Now run aws configure and copy past them in their corresponding parameter
+Now run AWS configure and copy past them in their corresponding parameter
 
 ```bash
 aws configure
@@ -118,15 +118,15 @@ aws configure
 # Default region name [eu-west-3]: 
 # Default output format [None]: 
 ```
-You can use the default region as the nearest one from you. In my case i used the eu-west-3 region (Paris).
-At this stage we can manage our AWS services remotely from our machine through the credentials stored on the file located in: 
+You can use the default region as the nearest one from you. In my case i have used eu-west-3 region (Paris).
+At this stage we can manage our AWS services remotely from our machine through the credentials stored on the file named credentials located in: 
 ```bash
 ~/.aws/credentials
 ```
 
 ### Create an Amazon EKS cluster (control plane)
 
-1. Run the following eksctl command in order to create a cluster using Elastic Kubernetes Service
+1. Run the following eksctl command to create a cluster using Elastic Kubernetes Service
 ```bash
 eksctl create cluster \
  --name mobilitydb-aws-cluster \
@@ -139,13 +139,13 @@ eksctl create cluster \
 ```
 
 In the region option you can use the nearest region from your location.
-In the node-type option you can define the type of the ressource for the created node. AWS provides a lot of ressource type. In my case i defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:).
+In the node-type option you can define the type of the ressource for the created node. AWS provides a lot of ressource type. In my case i have defined a m5.large type, which is 2 CPUs, 8G of RAM, 10G of storage. You can find the entire list of node type [here](https://eu-west-3.console.aws.amazon.com/ec2/v2/home?region=eu-west-3#LaunchInstanceWizard:).
 
- The ssh-access option used to accept ssh connection if you want to access to your EC2 instances via ssh.
+ The ssh-access option used to accept ssh connection if you want to access to your EC2 instances created via ssh.
 
 You can customize your cluster creation according to your needs, run eksctl create cluster --help to see all the options.
 
-The creation process take about a 20 minutes of time.
+The creation process take about 20 minutes of time.
 
 If you want to delete the cluster with all the ressources created just use:
 ```bash
@@ -233,7 +233,7 @@ kubectl get pod -owide
 ```
 In my case, mobilitydb-aws have pod name as mobilitydb-aws-7d745544dd-dkm7k and is running in the node 192.168.45.32.
 
-As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use the following command to connect to our postgres database, the password for postgres user is postgres. We can run our psql client within the pod mobilitydb-aws to confirm that citus and mobilitydb extension it's well created.
+As we have the host ip and the name of pod that run our scale MobilityDB environement instance, we can use the following command to connect to our postgres database, the password for postgres user is postgres. We can run our psql client within the pod mobilitydb-aws to confirm that citus and MobilityDB extension it's well created.
 
 ```bash
 
@@ -260,8 +260,8 @@ kubectl exec -it  mobilitydb-aws-7d745544dd-dkm7k -- psql -h 192.168.45.32 -U po
 ```
 ### Run MobilityDB queries
 .....
-In order to make the MobilityDB queries more powerfull, we have used the single node citus that create shards for distributed table.
-There is a simple dataset from AIS data,it is prepared to simulate MobilityDB queries. You can find it in [my repository](https://github.com/bouzouidja/MobilityDB-AWS/tree/master/data). You can mount more data in the /mnt/data of the host machine in the cloud in order to test complex analytics queries.  
+In order to make the MobilityDB queries more powerfull, we have used the single node citus that create shards for distributed tables.
+There is a simple dataset from AIS data, it is prepared to simulate MobilityDB queries. You can find it in [my repository](https://github.com/bouzouidja/MobilityDB-AWS/tree/master/data). You can mount more data in the /mnt/data from host machine to the Cloud in order to test complex analytics queries.  
 Also we have prepared the MobilityDB environement in order to use the queries of the AIS workshop. The extension MobilityDB and citus is created, the table aisinput already created and filled with the mobility_dataset.csv. Finally the aisinput is sharded using citus distribute table as single node. 
 
 
@@ -301,7 +301,7 @@ As we have a complex MobilityDB queries, we may use the Vertical Autoscaler and 
 
 ### Vertical Pod scaling using the Autoscaler
 
-The vertical scaling that provide aws it's a mechanism allows us to adjust automatically the pods ressources. This adjustment decrease the cluster cost and can free up cpu and memory to other pods that may need it. The vertical autoscaler analyze the pods demand in order to see if the CPU and memory requirements are appropriate. If adjustments are needed, the vpa-updater relaunches the pods with updated values. 
+The vertical scaling that provide AWS it's a mechanism allows us to adjust automatically the pods ressources. This adjustment decrease the cluster cost and can free up cpu and memory to other pods that may need it. The vertical autoscaler analyze the pods demand in order to see if the CPU and memory requirements are appropriate. If adjustments are needed, the vpa-updater relaunches the pods with updated values. 
 
 To deploy the vertical autoscaler, follow these steps:
 ```bash
@@ -336,7 +336,7 @@ kubectl get pods -n kube-system
 ### Horizontal Pod scaling using the Autoscaler
 
 
-The horizontal Autoscaler that provides AWS allows to increase the number of pods within the cluster, it's a replication controller. This can help the application scale out to meet increased demand or scale in when resources are not needed, the Horizontal Pod Autoscaler makes application to meet the resources target.
+The horizontal Autoscaler provides AWS to increase the number of pods within the cluster, it's a replication controller. This can help the application scale out to meet increased demand or scale in when resources are not needed, the Horizontal Pod Autoscaler makes application to meet the resources target.
 
 Before deploying the Horizontal autoscaler, we need the Kubernetes Metric server.
 The metric server is an API that collect the ressources statistics from the cluster and expose them for the use of the autoscaler. For more information about the metric server see [here](https://github.com/kubernetes-sigs/metrics-server).
@@ -354,10 +354,8 @@ There is a tutorial that show how to deploy the horizontal scaller using apache 
 Deployment using Citus cluster and AWS EC2 instances
 ------------
 
-
-
 ### Deploy mobilitydb-aws as standalone
-Before doing this step you need to connect within your AWS EC2 machine known as master node. We assume that we have already create and configure one AWS EC2 host master node and some AWS EC2 host worker node.
+Before doing this step you need to connect within your AWS EC2 machine known as master node. We have already create and configure one AWS EC2 host master node and some AWS EC2 host worker node.
 - You can run the image as standalone using docker run command, Execute this on all cluster's nodes.
 ```bash
 sudo ssh -i YourKeyPairGenerated.pem ubuntu@EC2_Public_IP_Address
@@ -398,11 +396,9 @@ fill free to fill the table mobilitydb_table before or after the distribution. A
 
 
 ### Deploy mobilitydb-aws image using citus manager
-This deployment is similar to the last one, except that we have a manager node. It simply listens for new containers tagged with the worker role, then adds them to the config file in a volume shared with the master node.
-In the same repository mobilitydb-aws run the command 
+This deployment is similar to the last one, except that we have a manager node. It simply listens for new containers tagged with the worker role, then adds them to the config file in a volume shared with the master node. 
 
-
-- Running the image as Citus cluster using this following
+- In the same repository mobilitydb-aws, run the image as Citus cluster using this following
 
 ```bash
 docker-compose -p mobilitydb-aws up
@@ -429,4 +425,3 @@ docker-compose -p mobilitydb-aws scale worker=5
 # Creating and starting 5 ... done
 
 ```
-
